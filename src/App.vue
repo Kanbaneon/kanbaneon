@@ -1,17 +1,18 @@
 <template>
-  <Header />
-  <router-view />
+  <ComingSoon />
 </template>
 
 <script>
 import { store } from "./utils/Data.store";
 import { defineAsyncComponent } from "vue";
+import ComingSoon from "./components/ComingSoon.vue";
 
 export default {
   components: {
     Header: defineAsyncComponent({
       loader: () => import("./components/Header.vue"),
     }),
+    ComingSoon,
   },
   async mounted() {
     await store.openDatabase();
