@@ -4,14 +4,12 @@
 
 <script>
 import { store } from "./utils/Data.store";
-import { defineAsyncComponent } from "vue";
 import ComingSoon from "./components/ComingSoon.vue";
+import Header from "./components/Header.vue";
 
 export default {
   components: {
-    Header: defineAsyncComponent({
-      loader: () => import("./components/Header.vue"),
-    }),
+    Header,
     ComingSoon,
   },
   async mounted() {
@@ -22,6 +20,10 @@ export default {
 </script>
 
 <style>
+body {
+  background-color: #42b883 !important;
+}
+
 .ant-card-body {
   padding: 8px;
   display: flex;
