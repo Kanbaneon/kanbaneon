@@ -25,6 +25,7 @@ export default {
 .container {
   height: 100vh;
   background: #42b883;
+  padding: 20px;
 
   display: flex;
   flex-direction: column;
