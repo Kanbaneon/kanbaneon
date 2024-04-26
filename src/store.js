@@ -1,6 +1,7 @@
 import { v4 } from "uuid";
 import { browserDB, INDEXED_DB } from "./helpers/IndexedDbHelper";
 import { createStore } from "vuex";
+import { addKanbanBoard } from "./store-api";
 
 const initialState = {
   kanbanBoards: {},
@@ -234,16 +235,7 @@ export const store = createStore({
         [userId]: currentBoards,
       });
     },
-    addKanbanBoard(state, board) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      currentBoards.push(board);
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
+    addKanbanBoard,
     async setKanbanBoards(state, boards) {
       state.kanbanBoards = boards;
       await browserDB.put(

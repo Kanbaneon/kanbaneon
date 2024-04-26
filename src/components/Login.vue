@@ -64,7 +64,8 @@ export default {
         if (!!user?.success) {
           this.$store.commit("setUser", {
             username: this.username,
-            isLoggedIn: true
+            isLoggedIn: true,
+            id: user.id
           });
 
           localStorage.setItem("token", user.token);

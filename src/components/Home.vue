@@ -52,6 +52,7 @@ import PlusIcon from "../assets/PlusIcon.vue";
 import KanbanImg from "../assets/KanbanImg.vue";
 import GetStartedImg from "../assets/GetStartedImg.vue";
 import * as uuid from "uuid";
+import { getBoards } from "../helpers/ApiHelper";
 
 const getTemplateList = () => [
   {
@@ -98,8 +99,9 @@ export default {
     GetStartedImg,
     PlusIcon,
   },
-  mounted() {
-    this.boards = this.$store.getters.currentBoards;
+  async mounted() {
+    const { boards } = await getBoards();
+    this.boards = boards ?? this.$store.getters.currentBoards;
   },
   methods: {
     handleModeChange(e) {
