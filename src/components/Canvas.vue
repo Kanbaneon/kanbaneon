@@ -2,18 +2,8 @@
   <div class="canvas-wrapper">
     <div id="kanbaneon-canvas"></div>
   </div>
-  <a-modal
-    title="Enter the message of new item"
-    :visible="visible"
-    @ok="handleOk"
-    @cancel="handleCancel"
-  >
-    <textarea
-      rows="8"
-      class="ant-input"
-      placeholder="Type here..."
-      v-model="message"
-    />
+  <a-modal title="Enter the message of new item" :visible="visible" @ok="handleOk" @cancel="handleCancel">
+    <textarea rows="8" class="ant-input" placeholder="Type here..." v-model="message" />
     <template v-slot:footer>
       <a-button key="back" @click="handleCancel"> Cancel </a-button>
       <a-button key="submit" type="primary" @click="handleOk">
@@ -21,48 +11,23 @@
       </a-button>
     </template>
   </a-modal>
-  <a-modal
-    :title="listDialog.title"
-    :visible="listDialog.visible"
-    @ok="handleOkListDialog"
-    @cancel="handleCancelListDialog"
-  >
-    <input
-      class="ant-input"
-      placeholder="Name"
-      v-model="listDialog.editingList.name"
-      @change="handleNameChange"
-    />
+  <a-modal :title="listDialog.title" :visible="listDialog.visible" @ok="handleOkListDialog"
+    @cancel="handleCancelListDialog">
+    <input class="ant-input" placeholder="Name" v-model="listDialog.editingList.name" @change="handleNameChange" />
     <label class="error-label">{{ listDialog.error.name }}</label>
     <template v-slot:footer>
-      <a-button
-        v-if="!listDialog.creating"
-        class="btn-danger"
-        type="danger"
-        @click="handleDeleteList"
-        >Delete</a-button
-      >
+      <a-button v-if="!listDialog.creating" class="btn-danger" type="danger" @click="handleDeleteList">Delete</a-button>
       <a-button key="back" @click="handleCancelListDialog"> Cancel </a-button>
       <a-button key="submit" type="primary" @click="handleOkListDialog">
         Confirm
       </a-button>
     </template>
   </a-modal>
-  <a-modal
-    :title="cardDialog.title"
-    :visible="cardDialog.visible"
-    @ok="handleOkCardDialog"
-    @cancel="handleCancelCardDialog"
-  >
-    <textarea
-      class="ant-input edit-card-textarea"
-      placeholder="Type here..."
-      v-model="cardDialog.editingCard.text"
-    />
+  <a-modal :title="cardDialog.title" :visible="cardDialog.visible" @ok="handleOkCardDialog"
+    @cancel="handleCancelCardDialog">
+    <textarea class="ant-input edit-card-textarea" placeholder="Type here..." v-model="cardDialog.editingCard.text" />
     <template v-slot:footer>
-      <a-button class="btn-danger" type="danger" @click="handleDeleteCard"
-        >Delete</a-button
-      >
+      <a-button class="btn-danger" type="danger" @click="handleDeleteCard">Delete</a-button>
       <a-button key="back" @click="handleCancelCardDialog"> Cancel </a-button>
       <a-button key="submit" type="primary" @click="handleOkCardDialog">
         Confirm
@@ -88,10 +53,12 @@ import getAddText from "../utils/DrawAddText";
 import getCard from "../utils/DrawCard";
 import getTile from "../utils/DrawTile";
 import getText from "../utils/DrawText";
+import { getBoard } from '../helpers/ApiHelper';
 
 export default {
   data() {
     return {
+      isLite: import.meta.env.VITE_LITE_VERSION === "ON",
       visible: false,
       message: "",
       addingList: null,
@@ -207,15 +174,24 @@ export default {
     },
   },
   async mounted() {
-    const currentList = this.$store.getters.currentBoards.find(
-      (v) => v.id === this.$store.state.currentBoardID
-    );
-    if (!currentList) {
-      this.$router.push("/");
+    let board;
+    if (this.isLite) {
+      const currentList = this.$store.getters.currentBoards.find(
+        (v) => v.id === this.$store.state.currentBoardID
+      );
+      if (!currentList) {
+        this.$router.push("/");
+      }
+    } else {
+      const id = this.$route.params.id;
+      board = await getBoard(id);
     }
-    this.drawFns().initCanvas();
+    this.$store.api = {
+      board: board.board
+    };
+    this.drawFns().initCanvas(board);
 
-    setInterval(() => {}, 5000);
+    setInterval(() => { }, 5000);
   },
 };
 </script>
@@ -226,17 +202,21 @@ export default {
   font-weight: bold;
   color: #42b883;
 }
+
 .subtitle {
   color: #35495e;
 }
+
 .canvas-wrapper {
   width: 100%;
   max-height: 90vh;
   overflow: scroll;
 }
+
 .edit-card-textarea {
   margin-bottom: 10px;
 }
+
 .btn-danger {
   background: #ef180c;
   color: white;

@@ -1,9 +1,14 @@
 import { __konva } from "./DrawCanvas";
 import { store } from "../store";
 
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
+
 const kanbanList = () =>
-  store.getters.currentBoards.find((v) => v.id === store.getters.currentBoardID)
-    ?.kanbanList;
+  isLite
+    ? store.getters.currentBoards.find(
+        (v) => v.id === store.getters.currentBoardID
+      )?.kanbanList
+    : store.api.board.kanbanList;
 
 export function initList() {
   const height = window.innerHeight;

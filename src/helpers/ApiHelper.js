@@ -25,6 +25,17 @@ export async function reauth(token) {
   }
 }
 
+export async function getBoard(id) {
+  try {
+    const response = await get(`/boards/${id}`);
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function getBoards() {
   try {
     const response = await get("/boards");

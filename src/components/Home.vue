@@ -100,10 +100,13 @@ export default {
     PlusIcon,
   },
   async mounted() {
-    const { boards } = await getBoards();
-    this.boards = boards ?? this.$store.getters.currentBoards;
+    this.refresh();
   },
   methods: {
+    async refresh() {
+      const { boards } = await getBoards();
+      this.boards = boards ?? this.$store.getters.currentBoards;
+    },
     handleModeChange(e) {
       this.mode = e.target.value;
     },
@@ -131,6 +134,7 @@ export default {
       };
 
       this.$store.commit("addKanbanBoard", newBoard);
+      this.refresh();
       this.handleCancelDialog();
     },
   },

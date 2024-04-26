@@ -54,7 +54,8 @@ export function editCard(editingCard) {
   this.drawFns().initList();
 }
 
-export function initCanvas() {
+export function initCanvas(list) {
+  const kanbanList = list?.board?.kanbanList ?? this.$store.getters.kanbanList;
   __vue.instance = this;
 
   const width =
@@ -63,10 +64,9 @@ export function initCanvas() {
       : 1600) + 20;
   const height = window.innerHeight + 20;
 
-  const largestList = this.$store.getters.kanbanList?.length;
+  const largestList = kanbanList?.length;
   const largestChildren =
-    !!largestList &&
-    Math.max(...this.$store.getters.kanbanList.map((v) => v.children?.length));
+    !!largestList && Math.max(...kanbanList.map((v) => v.children?.length));
 
   __konva.stage = new Konva.Stage({
     container: "kanbaneon-canvas",

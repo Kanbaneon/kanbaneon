@@ -1,22 +1,14 @@
 <template>
   <a-card class="header">
-    <a-col
-      :md="showNewList ? 14 : 18"
-      :xl="showNewList ? 15 : 19"
-      :xxl="showNewList ? 17 : 21"
-    >
+    <a-col :md="showNewList ? 14 : 18" :xl="showNewList ? 15 : 19" :xxl="showNewList ? 17 : 21">
       <h2 class="title" @click="handleDirectHome">
         KAN<span class="subtitle">BANEON</span>
       </h2>
     </a-col>
     <a-col :xl="3" :md="4" :xxl="2" v-if="showNewList && largeScreen"></a-col>
     <a-col :span="1" class="icon-btn-wrapper">
-      <div
-        class="icon-btn"
-        v-if="showNewList"
-        shape="round"
-        @click="largeScreen ? (visibleEditBoard = true) : (popupMenu = true)"
-      >
+      <div class="icon-btn" v-if="showNewList" shape="round"
+        @click="largeScreen ? (visibleEditBoard = true) : (popupMenu = true)">
         <DotsIcon />
       </div>
     </a-col>
@@ -25,22 +17,14 @@
         <template #content>
           <p><a-button block @click="logout">Logout</a-button></p>
         </template>
-        <div class="avatar" :size="64"><UserIcon /></div>
+        <div class="avatar" :size="64">
+          <UserIcon />
+        </div>
       </a-popover>
     </a-col>
   </a-card>
-  <a-modal
-    title="Enter the name of new list"
-    :visible="visible"
-    @ok="handleOk"
-    @cancel="handleCancel"
-  >
-    <input
-      class="ant-input"
-      placeholder="Name"
-      v-model="name"
-      @change="handleNameChange"
-    />
+  <a-modal title="Enter the name of new list" :visible="visible" @ok="handleOk" @cancel="handleCancel">
+    <input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
     <label class="error-label">{{ error.name }}</label>
     <template v-slot:footer>
       <a-button key="back" @click="handleCancel"> Cancel </a-button>
@@ -49,35 +33,19 @@
       </a-button>
     </template>
   </a-modal>
-  <a-modal
-    title="Edit board"
-    :visible="visibleEditBoard"
-    @ok="handleOkEditBoard"
-    @cancel="handleCancelEditBoard"
-  >
-    <input
-      class="ant-input"
-      placeholder="Name"
-      v-model="boardDialog.editingBoard.name"
-      @change="handleBoardNameChange"
-    />
+  <a-modal title="Edit board" :visible="visibleEditBoard" @ok="handleOkEditBoard" @cancel="handleCancelEditBoard">
+    <input class="ant-input" placeholder="Name" v-model="boardDialog.editingBoard.name"
+      @change="handleBoardNameChange" />
     <label class="error-label">{{ boardDialog.error.name }}</label>
     <template v-slot:footer>
-      <a-button class="btn-danger" type="danger" @click="handleDeleteBoard"
-        >Delete</a-button
-      >
+      <a-button class="btn-danger" type="danger" @click="handleDeleteBoard">Delete</a-button>
       <a-button key="back" @click="handleCancelEditBoard"> Cancel </a-button>
       <a-button key="submit" type="primary" @click="handleOkEditBoard">
         Confirm
       </a-button>
     </template>
   </a-modal>
-  <a-modal
-    title="Save & Exit"
-    :visible="visibleSave"
-    @ok="handleOk"
-    @cancel="handleCancelSave"
-  >
+  <a-modal title="Save & Exit" :visible="visibleSave" @ok="handleOk" @cancel="handleCancelSave">
     <p>Do you want to save this board and go back to home page?</p>
     <template v-slot:footer>
       <a-button key="back" @click="handleCancelSave"> Cancel </a-button>
@@ -99,10 +67,12 @@ import PlusIcon from "../assets/PlusIcon.vue";
 import DotsIcon from "../assets/DotsIcon.vue";
 import UserIcon from "../assets/UserIcon.vue";
 import { addMoreList } from "../utils/DrawCanvas";
+import { getBoard } from "../helpers/ApiHelper";
 
 export default {
   data() {
     return {
+      isLite: import.meta.env.VITE_LITE_VERSION === "ON",
       smallScreen: window.matchMedia("(max-width:456px)").matches,
       largeScreen: window.matchMedia("(min-width:456px)").matches,
       showNewList: this.$route.matched?.[0]?.path === "/board/:id",
@@ -215,9 +185,14 @@ export default {
       if (this.$route.matched?.[0]?.path === "/board/:id") {
         this.showNewList = true;
         this.$store.commit("setCurrentBoardID", this.$route?.params?.id);
-        this.currentBoard = (this.$store.getters.currentBoards ?? []).find(
+        let result;
+        if (!this.isLite) {
+          result = await getBoard(this.$route?.params?.id)
+        }
+        this.currentBoard = this.isLite ? (this.$store.getters.currentBoards ?? []).find(
           (v) => v.id === this.$store.state.currentBoardID
-        );
+        ) : result.board;
+
         this.boardDialog.editingBoard = {
           name: this.currentBoard?.name,
         };
@@ -234,6 +209,7 @@ h3 {
   padding-left: 8px;
   margin: 0px;
 }
+
 .icon-btn-wrapper {
   display: flex;
   justify-content: center;
