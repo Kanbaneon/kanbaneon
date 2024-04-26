@@ -5,14 +5,24 @@ import "ant-design-vue/dist/antd.css";
 import { router } from "./routes";
 import { setUpDB, store } from "./store";
 
-setUpDB()
-  .then(() => {
-    const app = createApp(App);
-    app.use(Antd);
-    app.use(store);
-    app.use(router);
-    app.mount("#app");
-  })
-  .catch((ex) => {
-    console.error(ex);
-  });
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
+
+if (isLite) {
+  setUpDB()
+    .then(() => {
+      const app = createApp(App);
+      app.use(Antd);
+      app.use(store);
+      app.use(router);
+      app.mount("#app");
+    })
+    .catch((ex) => {
+      console.error(ex);
+    });
+} else {//main app is purely stateless
+  const app = createApp(App);
+  app.use(Antd);
+  app.use(store);
+  app.use(router);
+  app.mount("#app");
+}

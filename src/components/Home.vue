@@ -3,69 +3,34 @@
     <a-row v-if="$store.state.user.isLoggedIn && boards?.length" :gutter="16">
       <a-col :xs="24" :md="6" v-if="smallScreen" class="col">
         <a-card class="add-new-btn-card" @click="visible = true">
-          <a-button @click="visible = true" type="primary" size="large"
-            ><PlusIcon />New Board</a-button
-          >
+          <a-button @click="visible = true" type="primary" size="large">
+            <PlusIcon />New Board
+          </a-button>
         </a-card>
       </a-col>
-      <a-col
-        class="col"
-        :xs="24"
-        :md="6"
-        v-for="board in boards"
-        v-bind:key="board.id"
-      >
-        <a-card
-          class="card"
-          :title="board.name"
-          @click="handleDirect(board.id)"
-        >
+      <a-col class="col" :xs="24" :md="6" v-for="board in boards" v-bind:key="board.id">
+        <a-card class="card" :title="board.name" @click="handleDirect(board.id)">
           <KanbanImg />
         </a-card>
       </a-col>
       <a-col :xs="24" :md="6" v-if="largeScreen" class="col">
         <a-card class="add-new-btn-card" @click="visible = true">
-          <a-button
-            @click="visible = true"
-            class="add-new-btn"
-            type="primary"
-            size="large"
-            ><PlusIcon />New Board</a-button
-          >
+          <a-button @click="visible = true" class="add-new-btn" type="primary" size="large">
+            <PlusIcon />New Board
+          </a-button>
         </a-card>
       </a-col>
     </a-row>
     <div v-if="$store.state.user.isLoggedIn && !boards?.length" class="wrapper">
       <GetStartedImg />
-      <a-button
-        @click="visible = true"
-        class="add-new-btn"
-        type="primary"
-        size="large"
-        >Get Started</a-button
-      >
+      <a-button @click="visible = true" class="add-new-btn" type="primary" size="large">Get Started</a-button>
     </div>
   </div>
-  <a-modal
-    title="Enter the name of new board"
-    :visible="visible"
-    @ok="handleAddNewBoard"
-    @cancel="handleCancelDialog"
-  >
-    <input
-      class="ant-input"
-      placeholder="Name"
-      v-model="name"
-      @change="handleNameChange"
-    />
+  <a-modal title="Enter the name of new board" :visible="visible" @ok="handleAddNewBoard" @cancel="handleCancelDialog">
+    <input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
     <label class="error-label">{{ error.name }}</label>
 
-    <a-radio-group
-      class="radio-wrapper"
-      v-model="mode"
-      default-value="template"
-      @change="handleModeChange"
-    >
+    <a-radio-group class="radio-wrapper" v-model="mode" default-value="template" @change="handleModeChange">
       <a-radio class="radio-wrapper" value="empty">
         Create empty board
       </a-radio>
@@ -87,7 +52,6 @@ import PlusIcon from "../assets/PlusIcon.vue";
 import KanbanImg from "../assets/KanbanImg.vue";
 import GetStartedImg from "../assets/GetStartedImg.vue";
 import * as uuid from "uuid";
-import { onBeforeUpdate, onMounted } from "vue";
 
 const getTemplateList = () => [
   {

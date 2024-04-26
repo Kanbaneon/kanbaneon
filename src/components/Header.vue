@@ -150,6 +150,7 @@ export default {
         username: "",
         id: undefined,
       });
+      localStorage.removeItem("token");
       this.$router.push("/login");
     },
     async handleSaveData() {

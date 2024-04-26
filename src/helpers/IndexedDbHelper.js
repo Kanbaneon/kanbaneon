@@ -181,4 +181,7 @@ class IndexedDbHelper {
     });
 }
 
-export const browserDB = new IndexedDbHelper();
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
+export const browserDB = isLite
+  ? new IndexedDbHelper()
+  : { get: () => {}, put: () => {} };

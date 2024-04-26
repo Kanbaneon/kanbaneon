@@ -1,15 +1,44 @@
 import { defineAsyncComponent } from "vue";
 import * as VueRouter from "vue-router";
 import { store } from "./store";
+import { reauth } from "./helpers/ApiHelper";
 
-const loginGuard = () => {
+const loginGuard = async () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const result = await reauth(token);
+
+      if (result?.success) {
+        store.state.user = {
+          username: result.reauth.username,
+          isLoggedIn: true,
+        };
+      }
+    } catch (ex) {
+      return { path: "/login" };
+    }
+  }
+
   if (!store.state.user.isLoggedIn) {
     return { path: "/login" };
   }
   return true;
 };
 
-const logoutGuard = () => {
+const logoutGuard = async () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    const result = await reauth(token);
+
+    if (result?.success) {
+      store.state.user = {
+        username: result.reauth.username,
+        isLoggedIn: true,
+      };
+    }
+  }
+
   if (store.state.user.isLoggedIn) {
     return { path: "/" };
   }

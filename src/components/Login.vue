@@ -9,19 +9,13 @@
         <div class="input-wrapper">
           <a-input v-model:value="username" placeholder="Enter your username" />
           <label class="error-label">{{ error.username }}&nbsp;</label>
-          <a-input
-            v-if="!isLite"
-            v-model:value="password"
-            placeholder="Enter your password"
-            type="password"
-          />
-          <label v-if="!isLite" class="error-label"
-            >{{ error.password }}&nbsp;</label
-          >
+          <a-input v-if="!isLite" v-model:value="password" placeholder="Enter your password" type="password" />
+          <label v-if="!isLite" class="error-label">{{ error.password }}&nbsp;</label>
         </div>
-        <a-button type="primary" size="large" block @click="login($event)"
-          >Login</a-button
-        >
+        <a-button :disabled="isLoading" type="primary" size="large" block
+          @click="isLite ? login($event) : loginApi($event)">
+          <a-spin v-if="isLoading" />
+          Login</a-button>
       </a-card>
     </form>
   </div>
@@ -31,12 +25,14 @@
 import { v4 } from "uuid";
 import { INDEXED_DB, browserDB } from "../helpers/IndexedDbHelper";
 import { getExistingUser } from "../store";
+import { login } from "../helpers/ApiHelper";
 
 export default {
   data: () => {
     return {
       // @ts-ignore
       isLite: import.meta.env.VITE_LITE_VERSION === "ON",
+      isLoading: false,
       username: "",
       password: "",
       error: { username: "", password: "" },
@@ -60,6 +56,27 @@ export default {
       });
       this.$router.push("/");
     },
+    async loginApi(e) {
+      e.preventDefault();
+      this.isLoading = true;
+      try {
+        const user = await login(this.username, this.password);
+        if (!!user?.success) {
+          this.$store.commit("setUser", {
+            username: this.username,
+            isLoggedIn: true
+          });
+
+          localStorage.setItem("token", user.token);
+          this.$router.push("/");
+        }
+      } catch (ex) {
+        console.error(ex);
+      }
+      finally {
+        this.isLoading = false;
+      }
+    }
   },
 };
 </script>

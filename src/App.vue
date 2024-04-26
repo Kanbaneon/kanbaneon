@@ -55,6 +55,7 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 .error-label {
   color: rgb(243, 67, 67);
 }
