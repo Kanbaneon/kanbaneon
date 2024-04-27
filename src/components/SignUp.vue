@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="loginApi($event)">
+    <form @submit.prevent="signUp($event)">
       <a-card class="card">
         <h2 class="title">
           KAN<span class="subtitle">BANEON</span>
@@ -13,14 +13,13 @@
           <label v-if="!isLite" class="error-label">{{ error.password }}&nbsp;</label>
         </div>
         <input type="submit" hidden />
-        <a-button :disabled="isLoading" type="primary" size="large" block
-          @click="isLite ? login($event) : loginApi($event)">
+        <a-button :disabled="isLoading" type="primary" size="large" block @click="signUp($event)">
           <a-spin v-if="isLoading" />
-          Login</a-button>
+          Sign Up</a-button>
         <div class="form-footer">
-          Don't have an account?
+          Already have an account?
           <span>
-            <router-link to="/signup">Sign Up Here</router-link>
+            <router-link to="/login">Login Here</router-link>
           </span>
         </div>
       </a-card>
@@ -29,10 +28,7 @@
 </template>
 
 <script lang="ts">
-import { v4 } from "uuid";
-import { INDEXED_DB, browserDB } from "../helpers/IndexedDbHelper";
-import { getExistingUser } from "../store";
-import { login } from "../helpers/ApiHelper";
+import { signUp } from "../helpers/ApiHelper";
 
 export default {
   data: () => {
@@ -46,37 +42,13 @@ export default {
     };
   },
   methods: {
-    async login(e) {
-      e.preventDefault();
-      let userId = await getExistingUser(this.username);
-      if (!userId) {
-        userId = v4();
-        await browserDB.put(INDEXED_DB.objectStores.KANBANEON, "users", {
-          [this.username]: userId,
-        });
-      }
-
-      this.$store.commit("setUser", {
-        username: this.username,
-        isLoggedIn: true,
-        id: userId,
-      });
-      this.$router.push("/");
-    },
-    async loginApi(e) {
+    async signUp(e) {
       e.preventDefault();
       this.isLoading = true;
       try {
-        const user = await login(this.username, this.password);
-        if (!!user?.success) {
-          this.$store.commit("setUser", {
-            username: this.username,
-            isLoggedIn: true,
-            id: user.id
-          });
-
-          localStorage.setItem("token", user.token);
-          this.$router.push("/");
+        const result = await signUp(this.username, this.password);
+        if (result?.success) {
+          this.$router.push("/login");
         }
       } catch (ex) {
         console.error(ex);

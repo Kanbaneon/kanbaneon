@@ -1,11 +1,22 @@
 const apiUrl = import.meta.env.VITE_KANBANEON_API_URL;
 import { message } from "ant-design-vue";
 
-const token = localStorage.getItem("token");
+const token = () => localStorage.getItem("token");
 
 export async function login(username, password) {
   try {
     const response = await post("/login", { username, password });
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function signUp(username, password) {
+  try {
+    const response = await post("/signup", { username, password });
     if (response.success) {
       return response;
     }
@@ -49,8 +60,21 @@ export async function getBoards() {
 
 export async function addBoard(board) {
   try {
-    const response = await post("/boards", { ...board }, token);
+    const response = await post("/boards", { ...board }, token());
     if (response.success) {
+      message.success("Board is successfully added.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function editBoard(boardId, board) {
+  try {
+    const response = await put(`/boards/${boardId}`, { ...board }, token());
+    if (response.success) {
+      message.success("Board is successfully updated.");
       return response;
     }
   } catch (ex) {
@@ -62,8 +86,25 @@ const get = async (endpoint) => {
   const response = await fetch(apiUrl + endpoint, {
     method: "GET",
     headers: new Headers({
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token()}`,
     }),
+  });
+
+  const json = await response.json();
+  if (response.status !== 200) {
+    return message.error(json.message);
+  }
+
+  return json;
+};
+
+const put = async (endpoint, body) => {
+  const response = await fetch(apiUrl + endpoint, {
+    method: "PUT",
+    headers: new Headers({
+      Authorization: `Bearer ${token()}`,
+    }),
+    body: JSON.stringify(body),
   });
 
   const json = await response.json();

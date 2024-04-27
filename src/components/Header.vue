@@ -271,9 +271,21 @@ h3 {
 }
 </style>
 
-<style>
+<style scoped>
 .header .ant-card-body {
   width: 100%;
   display: flex;
+}
+
+.ant-breadcrumb a {
+    color: whitesmoke;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.ant-breadcrumb a:hover {
+    color: rgb(13, 68, 63);
+    font-size: 20px;
+    transition: color 0.3s;
 }
 </style>

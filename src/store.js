@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 import { browserDB, INDEXED_DB } from "./helpers/IndexedDbHelper";
 import { createStore } from "vuex";
-import { addKanbanBoard } from "./store-api";
+import { addKanbanBoard, editKanbanBoard } from "./store-api";
 
 const initialState = {
   kanbanBoards: {},
@@ -174,19 +174,7 @@ export const store = createStore({
         [userId]: currentBoards,
       });
     },
-    editKanbanBoard(state, board) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const currentBoardIndex = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-      currentBoards[currentBoardIndex].name = board.name;
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
+    editKanbanBoard,
     editKanbanList(state, list) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;

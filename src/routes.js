@@ -45,6 +45,21 @@ const logoutGuard = async () => {
   return true;
 };
 
+const sessionGuard = async () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    const result = await reauth(token);
+
+    if (result?.success) {
+      store.state.user = {
+        username: result.reauth.username,
+        isLoggedIn: true,
+      };
+    }
+  }
+  return true;
+};
+
 const routes = [
   {
     path: "/",
@@ -58,12 +73,19 @@ const routes = [
     beforeEnter: logoutGuard,
     props: true,
   },
+  {
+    path: "/signup",
+    component: () => import("./components/SignUp.vue"),
+    beforeEnter: logoutGuard,
+    props: true,
+  },
   { path: "/board", redirect: "/" },
   {
     path: "/board/:id",
     component: defineAsyncComponent({
       loader: () => import("./components/Canvas.vue"),
     }),
+    beforeEnter: sessionGuard,
     props: true,
   },
   {
