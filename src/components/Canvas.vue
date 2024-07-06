@@ -140,11 +140,18 @@ export default {
       this.handleCancelCardDialog();
     },
     handleOkListDialog() {
+      if (!this.listDialog.editingList.name) {
+        return this.listDialog.error.name = !this.listDialog?.editingList?.name
+          ? "*required"
+          : "";
+      }
+
       if (!!this.listDialog?.creating) {
         const newList = {
           name: this.listDialog.editingList.name,
         };
         this.addMoreList(newList);
+        this.fetchDataAndDrawInstantly();
         return this.handleCancelListDialog();
       }
 
@@ -175,6 +182,20 @@ export default {
       this.listDialog.error.name = !this.listDialog?.editingList?.name
         ? "*required"
         : "";
+    },
+    async fetchDataAndDrawInstantly() {
+      try {
+        const id = this.$route.params.id;
+        const data = await getBoard(id);
+
+        if (data.board)
+          this.$store.api = {
+            board: data.board
+          };
+        this.drawFns().initCanvas(data);
+      } catch (ex) {
+        console.error(ex);
+      }
     },
     async fetchDataAndDraw() {
       try {

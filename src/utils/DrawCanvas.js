@@ -54,8 +54,8 @@ export function editCard(editingCard) {
   this.drawFns().initList();
 }
 
-export function initCanvas(list) {
-  const kanbanList = list?.board?.kanbanList ?? this.$store.getters.kanbanList;
+export function initCanvas(data) {
+  const kanbanList = data?.board?.kanbanList ?? this.$store.getters.kanbanList;
   __vue.instance = this;
 
   const width =

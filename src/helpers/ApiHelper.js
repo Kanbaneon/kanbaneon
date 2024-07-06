@@ -70,9 +70,9 @@ export async function addBoard(board) {
   }
 }
 
-export async function addList(list) {
+export async function addList(boardId, list) {
   try {
-    const response = await post("/lists", { ...list }, token());
+    const response = await post(`/boards/${boardId}/lists`, { ...list }, token());
     if (response.success) {
       message.success("List is successfully added.");
       return response;

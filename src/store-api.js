@@ -32,7 +32,7 @@ export const addKanbanList = isLite
       });
     }
   : async (state, list) => {
-      await addList(list);
+      await addList(state.currentBoardID, list);
     };
 
 export const editKanbanBoard = isLite
