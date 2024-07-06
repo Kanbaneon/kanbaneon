@@ -1,10 +1,6 @@
 import Konva from "konva";
 import * as uuid from "uuid";
 
-const __vue = {
-  instance: null,
-};
-
 export const __konva = {
   stage: null,
   layer: null,
@@ -15,7 +11,7 @@ export const __dnd = {
   item: null,
 };
 
-export function addMoreCard({ listId, text }) {
+export function addCardOnCanvas({ listId, text }) {
   const newCard = {
     id: uuid.v4(),
     text: text,
@@ -24,39 +20,33 @@ export function addMoreCard({ listId, text }) {
   this.drawFns().initCanvas();
 }
 
-export function addMoreList(newList) {
-  const addingList = {
-    id: uuid.v4(),
-    name: newList?.name,
-    children: [],
-  };
+export function addListOnCanvas(addingList) {
   this.$store.commit("addKanbanList", addingList);
-  __vue.instance.drawFns().initCanvas();
+  this.drawFns().initCanvas();
 }
 
-export function deleteList(deletingList) {
+export function deleteListOnCanvas(deletingList) {
   this.$store.commit("deleteKanbanList", deletingList);
   this.drawFns().initList();
 }
 
-export function editList(editingList) {
+export function editListOnCanvas(editingList) {
   this.$store.commit("editKanbanList", editingList);
   this.drawFns().initList();
 }
 
-export function deleteCard(deletingCard) {
+export function deleteCardOnCanvas(deletingCard) {
   this.$store.commit("deleteKanbanCard", deletingCard);
   this.drawFns().initList();
 }
 
-export function editCard(editingCard) {
+export function editCardOnCanvas(editingCard) {
   this.$store.commit("editKanbanCard", editingCard);
   this.drawFns().initList();
 }
 
 export function initCanvas(data) {
   const kanbanList = data?.board?.kanbanList ?? this.$store.getters.kanbanList;
-  __vue.instance = this;
 
   const width =
     (window.matchMedia("(min-width:1440px)").matches

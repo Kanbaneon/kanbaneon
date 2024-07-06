@@ -6,6 +6,7 @@ import {
   addKanbanList,
   editKanbanBoard,
   deleteKanbanBoard,
+  deleteKanbanList
 } from "./store-api";
 
 const initialState = {
@@ -134,22 +135,7 @@ export const store = createStore({
         [userId]: currentBoards,
       });
     },
-    deleteKanbanList(state, list) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const currentBoardIndex = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-      currentBoards[currentBoardIndex].kanbanList = currentBoards[
-        currentBoardIndex
-      ].kanbanList.filter((v) => v.id !== list.listId);
-
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
+    deleteKanbanList,
     deleteKanbanBoard,
     editKanbanCard(state, { listId, text, id }) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));

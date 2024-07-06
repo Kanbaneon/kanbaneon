@@ -72,7 +72,11 @@ export async function addBoard(board) {
 
 export async function addList(boardId, list) {
   try {
-    const response = await post(`/boards/${boardId}/lists`, { ...list }, token());
+    const response = await post(
+      `/boards/${boardId}/lists`,
+      { ...list },
+      token()
+    );
     if (response.success) {
       message.success("List is successfully added.");
       return response;
@@ -99,6 +103,21 @@ export async function deleteBoard(boardId) {
     const response = await del(`/boards/${boardId}`, token());
     if (response.success) {
       message.success("Board is successfully deleted.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function deleteList(boardId, list) {
+  try {
+    const response = await del(
+      `/boards/${boardId}/lists/${list.listId}`,
+      token()
+    );
+    if (response.success) {
+      message.success("List is successfully deleted.");
       return response;
     }
   } catch (ex) {

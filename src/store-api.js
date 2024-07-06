@@ -1,4 +1,10 @@
-import { addBoard, addList, editBoard, deleteBoard } from "./helpers/ApiHelper";
+import {
+  addBoard,
+  addList,
+  editBoard,
+  deleteBoard,
+  deleteList,
+} from "./helpers/ApiHelper";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 
@@ -65,4 +71,25 @@ export const deleteKanbanBoard = isLite
     }
   : async (state, board) => {
       await deleteBoard(state.currentBoardID);
+    };
+
+export const deleteKanbanList = isLite
+  ? (state, list) => {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      const currentBoards = allBoards[userId] ?? [];
+      const currentBoardIndex = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+      currentBoards[currentBoardIndex].kanbanList = currentBoards[
+        currentBoardIndex
+      ].kanbanList.filter((v) => v.id !== list.listId);
+
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, list) => {
+      await deleteList(state.currentBoardID, list);
     };

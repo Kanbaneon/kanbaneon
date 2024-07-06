@@ -42,12 +42,12 @@
 <script>
 import {
   initCanvas,
-  addMoreCard,
-  addMoreList,
-  editCard,
-  deleteCard,
-  editList,
-  deleteList,
+  addCardOnCanvas,
+  addListOnCanvas,
+  editCardOnCanvas,
+  deleteCardOnCanvas,
+  editListOnCanvas,
+  deleteListOnCanvas,
 } from "../utils/DrawCanvas";
 import { initList } from "../utils/DrawList";
 import { initListItem } from "../utils/DrawListItem";
@@ -56,7 +56,8 @@ import getAddText from "../utils/DrawAddText";
 import getCard from "../utils/DrawCard";
 import getTile from "../utils/DrawTile";
 import getText from "../utils/DrawText";
-import { getBoard } from '../helpers/ApiHelper';
+import { addList, deleteList, getBoard } from '../helpers/ApiHelper';
+import * as uuid from "uuid";
 
 export default {
   data() {
@@ -94,12 +95,12 @@ export default {
         getText: getText.bind(this),
       };
     },
-    addMoreCard,
-    addMoreList,
-    editCard,
-    deleteCard,
-    editList,
-    deleteList,
+    addCardOnCanvas,
+    addListOnCanvas,
+    editCardOnCanvas,
+    deleteCardOnCanvas,
+    editListOnCanvas,
+    deleteListOnCanvas,
     handleCancel() {
       this.visible = false;
       this.message = "";
@@ -127,7 +128,7 @@ export default {
     },
     handleOk() {
       const newCard = { listId: this.addingList?.id, text: this.message };
-      this.addMoreCard(newCard);
+      this.addCardOnCanvas(newCard);
       this.handleCancel();
     },
     handleOkCardDialog() {
@@ -136,37 +137,54 @@ export default {
         listId: this.cardDialog.editingCard.parentList.id,
         text: this.cardDialog.editingCard.text,
       };
-      this.editCard(editingCard);
+      this.editCardOnCanvas(editingCard);
       this.handleCancelCardDialog();
     },
-    handleOkListDialog() {
-      if (!this.listDialog.editingList.name) {
-        return this.listDialog.error.name = !this.listDialog?.editingList?.name
-          ? "*required"
-          : "";
-      }
+    async handleOkListDialog() {
+      try {
+        if (!this.listDialog.editingList.name) {
+          return this.listDialog.error.name = !this.listDialog?.editingList?.name
+            ? "*required"
+            : "";
+        }
 
-      if (!!this.listDialog?.creating) {
-        const newList = {
-          name: this.listDialog.editingList.name,
-        };
-        this.addMoreList(newList);
-        this.fetchDataAndDrawInstantly();
-        return this.handleCancelListDialog();
+        if (!!this.listDialog?.creating) {
+          const newList = {
+            id: uuid.v4(),
+            name: this.listDialog?.editingList?.name,
+            children: [],
+          };
+          const addedResult = this.isLite ? this.addListOnCanvas(newList) : await addList(this.$store.state.currentBoardID, newList);
+          if (addedResult?.board) {
+            this.$store.api = {
+              board: addedResult.board
+            };
+            this.drawFns().initCanvas();
+          }
+        } else {
+          const editingList = {
+            listId: this.listDialog.editingList.id,
+            name: this.listDialog.editingList.name,
+          };
+          this.editListOnCanvas(editingList);
+        }
+      } catch (ex) {
+        console.error(ex);
+      } finally {
+        this.handleCancelListDialog();
       }
-
-      const editingList = {
-        listId: this.listDialog.editingList.id,
-        name: this.listDialog.editingList.name,
-      };
-      this.editList(editingList);
-      this.handleCancelListDialog();
     },
-    handleDeleteList() {
+    async handleDeleteList() {
       const deletingList = {
         listId: this.listDialog.editingList.id,
       };
-      this.deleteList(deletingList);
+      const deletedResult = this.isLite ? this.deleteListOnCanvas(deletingList) : await deleteList(this.$store.state.currentBoardID, deletingList);
+      if (deletedResult?.board) {
+        this.$store.api = {
+          board: deletedResult.board
+        };
+        this.drawFns().initCanvas();
+      }
       this.handleCancelListDialog();
     },
     handleDeleteCard() {
@@ -183,20 +201,6 @@ export default {
         ? "*required"
         : "";
     },
-    async fetchDataAndDrawInstantly() {
-      try {
-        const id = this.$route.params.id;
-        const data = await getBoard(id);
-
-        if (data.board)
-          this.$store.api = {
-            board: data.board
-          };
-        this.drawFns().initCanvas(data);
-      } catch (ex) {
-        console.error(ex);
-      }
-    },
     async fetchDataAndDraw() {
       try {
         this.isLoading = true;
@@ -208,13 +212,14 @@ export default {
         }
 
 
-        if (data.board)
+        if (data.board) {
           this.$store.api = {
             board: data.board
           };
-        this.drawFns().initCanvas(data);
+          this.drawFns().initCanvas(data);
 
-        setInterval(() => { }, 5000);
+          setInterval(() => { }, 5000);
+        }
       } catch (ex) {
         console.error(ex);
         return this.$router.push("/");

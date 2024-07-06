@@ -66,7 +66,7 @@
 import PlusIcon from "../assets/PlusIcon.vue";
 import DotsIcon from "../assets/DotsIcon.vue";
 import UserIcon from "../assets/UserIcon.vue";
-import { addMoreList } from "../utils/DrawCanvas";
+import { addListOnCanvas } from "../utils/DrawCanvas";
 import { deleteBoard, getBoard } from "../helpers/ApiHelper";
 
 export default {
@@ -148,7 +148,7 @@ export default {
       }
 
       const addingList = { name: this.name };
-      addMoreList(addingList);
+      addListOnCanvas(addingList);
       this.handleCancel();
     },
     handleNameChange(e) {
