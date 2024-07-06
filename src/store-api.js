@@ -1,4 +1,4 @@
-import { addBoard, editBoard } from "./helpers/ApiHelper";
+import { addBoard, addList, editBoard, deleteBoard } from "./helpers/ApiHelper";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 
@@ -14,8 +14,25 @@ export const addKanbanBoard = isLite
       });
     }
   : async (state, board) => {
+      await addBoard(board);
+    };
+
+export const addKanbanList = isLite
+  ? (state, list) => {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
-      await addBoard(board, userId);
+      const currentBoards = allBoards[userId] ?? [];
+      const currentBoardIndex = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+      currentBoards[currentBoardIndex].kanbanList.push(list);
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, list) => {
+      await addList(list);
     };
 
 export const editKanbanBoard = isLite
@@ -34,4 +51,18 @@ export const editKanbanBoard = isLite
     }
   : async (state, board) => {
       await editBoard(state.currentBoardID, board);
+    };
+
+export const deleteKanbanBoard = isLite
+  ? (state, boardId) => {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      allBoards[userId] = allBoards[userId].filter((v) => v.id !== boardId);
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: allBoards[userId],
+      });
+    }
+  : async (state, board) => {
+      await deleteBoard(state.currentBoardID);
     };

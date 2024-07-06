@@ -16,6 +16,7 @@ const loginGuard = async () => {
         };
       }
     } catch (ex) {
+      console.error(ex);
       return { path: "/login" };
     }
   }
@@ -29,13 +30,24 @@ const loginGuard = async () => {
 const logoutGuard = async () => {
   const token = localStorage.getItem("token");
   if (token) {
-    const result = await reauth(token);
+    try {
+      const result = await reauth(token);
 
-    if (result?.success) {
-      store.state.user = {
-        username: result.reauth.username,
-        isLoggedIn: true,
-      };
+      if (result?.success) {
+        store.state.user = {
+          username: result.reauth.username,
+          isLoggedIn: true,
+        };
+      } else {
+        store.commit("setUser", {
+          isLoggedIn: false,
+          username: "",
+          id: undefined,
+        });
+        localStorage.removeItem("token");
+      }
+    } catch (ex) {
+      console.error(ex);
     }
   }
 

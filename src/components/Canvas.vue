@@ -2,6 +2,9 @@
   <div class="canvas-wrapper">
     <div id="kanbaneon-canvas"></div>
   </div>
+  <div v-if="isLoading" class="loading-wrapper">
+    <div>Loading....</div>
+  </div>
   <a-modal title="Enter the message of new item" :visible="visible" @ok="handleOk" @cancel="handleCancel">
     <textarea rows="8" class="ant-input" placeholder="Type here..." v-model="message" />
     <template v-slot:footer>
@@ -59,6 +62,7 @@ export default {
   data() {
     return {
       isLite: import.meta.env.VITE_LITE_VERSION === "ON",
+      isLoading: false,
       visible: false,
       message: "",
       addingList: null,
@@ -172,9 +176,31 @@ export default {
         ? "*required"
         : "";
     },
+    async fetchDataAndDraw() {
+      try {
+        this.isLoading = true;
+        const id = this.$route.params.id;
+        const data = await getBoard(id);
+        this.isLoading = false;
+        if (!data?.board) {
+          return this.$router.push("/");
+        }
+
+
+        if (data.board)
+          this.$store.api = {
+            board: data.board
+          };
+        this.drawFns().initCanvas(data);
+
+        setInterval(() => { }, 5000);
+      } catch (ex) {
+        console.error(ex);
+        return this.$router.push("/");
+      }
+    }
   },
   async mounted() {
-    let board;
     if (this.isLite) {
       const currentList = this.$store.getters.currentBoards.find(
         (v) => v.id === this.$store.state.currentBoardID
@@ -182,16 +208,9 @@ export default {
       if (!currentList) {
         this.$router.push("/");
       }
-    } else {
-      const id = this.$route.params.id;
-      board = await getBoard(id);
+      return;
     }
-    this.$store.api = {
-      board: board.board
-    };
-    this.drawFns().initCanvas(board);
-
-    setInterval(() => { }, 5000);
+    this.fetchDataAndDraw();
   },
 };
 </script>
@@ -207,10 +226,19 @@ export default {
   color: #35495e;
 }
 
+.loading-wrapper {
+  width: 100vw;
+  height: 60vh;
+  font-size: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .canvas-wrapper {
   width: 100%;
   max-height: 90vh;
-  overflow: scroll;
+  overflow-x: scroll;
 }
 
 .edit-card-textarea {

@@ -57,7 +57,7 @@
   <h3>
     <a-breadcrumb>
       <a-breadcrumb-item><a href="/">Home</a></a-breadcrumb-item>
-      <a-breadcrumb-item>{{ currentBoard.name }}</a-breadcrumb-item>
+      <a-breadcrumb-item :key="currentBoard.name">{{ currentBoard.name }}</a-breadcrumb-item>
     </a-breadcrumb>
   </h3>
 </template>
@@ -67,7 +67,7 @@ import PlusIcon from "../assets/PlusIcon.vue";
 import DotsIcon from "../assets/DotsIcon.vue";
 import UserIcon from "../assets/UserIcon.vue";
 import { addMoreList } from "../utils/DrawCanvas";
-import { getBoard } from "../helpers/ApiHelper";
+import { deleteBoard, getBoard } from "../helpers/ApiHelper";
 
 export default {
   data() {
@@ -136,10 +136,9 @@ export default {
       this.handleCancelEditBoard();
     },
     async handleDeleteBoard() {
-      this.$store.commit(
-        "deleteKanbanBoard",
-        this.$store.getters.currentBoardID
-      );
+      await deleteBoard(this.$store.getters.currentBoardID);
+      this.currentBoard.name = null;
+      await this.$store.commit("setCurrentBoardID", null);
       this.$router.push("/");
       this.handleCancelEditBoard();
     },
@@ -198,6 +197,7 @@ export default {
         };
       } else {
         this.showNewList = false;
+        this.$store.commit("setCurrentBoardID", null);
       }
     },
   },
@@ -278,14 +278,14 @@ h3 {
 }
 
 .ant-breadcrumb a {
-    color: whitesmoke;
-    font-size: 20px;
-    transition: color 0.3s;
+  color: whitesmoke;
+  font-size: 20px;
+  transition: color 0.3s;
 }
 
 .ant-breadcrumb a:hover {
-    color: rgb(13, 68, 63);
-    font-size: 20px;
-    transition: color 0.3s;
+  color: rgb(13, 68, 63);
+  font-size: 20px;
+  transition: color 0.3s;
 }
 </style>

@@ -70,11 +70,35 @@ export async function addBoard(board) {
   }
 }
 
+export async function addList(list) {
+  try {
+    const response = await post("/lists", { ...list }, token());
+    if (response.success) {
+      message.success("List is successfully added.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function editBoard(boardId, board) {
   try {
     const response = await put(`/boards/${boardId}`, { ...board }, token());
     if (response.success) {
       message.success("Board is successfully updated.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function deleteBoard(boardId) {
+  try {
+    const response = await del(`/boards/${boardId}`, token());
+    if (response.success) {
+      message.success("Board is successfully deleted.");
       return response;
     }
   } catch (ex) {
@@ -105,6 +129,22 @@ const put = async (endpoint, body) => {
       Authorization: `Bearer ${token()}`,
     }),
     body: JSON.stringify(body),
+  });
+
+  const json = await response.json();
+  if (response.status !== 200) {
+    return message.error(json.message);
+  }
+
+  return json;
+};
+
+const del = async (endpoint) => {
+  const response = await fetch(apiUrl + endpoint, {
+    method: "DELETE",
+    headers: new Headers({
+      Authorization: `Bearer ${token()}`,
+    }),
   });
 
   const json = await response.json();
