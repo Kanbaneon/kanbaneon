@@ -206,7 +206,7 @@ export default {
         ? "*required"
         : "";
     },
-    async fetchDataAndDraw() {
+    async fetchData() {
       try {
         this.isLoading = true;
         const id = this.$route.params.id;
@@ -221,9 +221,6 @@ export default {
           this.$store.api = {
             board: data.board
           };
-          this.drawFns().initCanvas(data);
-
-          setInterval(() => { }, 5000);
         }
       } catch (ex) {
         console.error(ex);
@@ -239,9 +236,12 @@ export default {
       if (!currentList) {
         this.$router.push("/");
       }
-      return;
     }
-    this.fetchDataAndDraw();
+    else {
+      this.fetchData();
+    }
+    this.drawFns().initCanvas();
+    setInterval(() => { }, 5000);
   },
 };
 </script>

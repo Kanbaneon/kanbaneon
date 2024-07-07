@@ -10,7 +10,7 @@ import {
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 
 export const addKanbanBoard = isLite
-  ? (state, board) => {
+  ? function (state, board) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
       const currentBoards = allBoards[userId] ?? [];
@@ -25,7 +25,7 @@ export const addKanbanBoard = isLite
     };
 
 export const addKanbanList = isLite
-  ? (state, list) => {
+  ? function (state, list) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
       const currentBoards = allBoards[userId] ?? [];
@@ -43,7 +43,7 @@ export const addKanbanList = isLite
     };
 
 export const editKanbanBoard = isLite
-  ? (state, board) => {
+  ? function (state, board) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
       const currentBoards = allBoards[userId] ?? [];
@@ -61,7 +61,7 @@ export const editKanbanBoard = isLite
     };
 
 export const editKanbanList = isLite
-  ? (state, list) => {
+  ? function (state, list) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
       const currentBoards = allBoards[userId] ?? [];
@@ -82,7 +82,7 @@ export const editKanbanList = isLite
     };
 
 export const deleteKanbanBoard = isLite
-  ? (state, boardId) => {
+  ? function (state, boardId) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
       allBoards[userId] = allBoards[userId].filter((v) => v.id !== boardId);
@@ -96,7 +96,7 @@ export const deleteKanbanBoard = isLite
     };
 
 export const deleteKanbanList = isLite
-  ? (state, list) => {
+  ? function (state, list) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
       const currentBoards = allBoards[userId] ?? [];

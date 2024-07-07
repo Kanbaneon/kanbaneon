@@ -75,6 +75,7 @@ const getTemplateList = () => [
 export default {
   data() {
     return {
+      isLite: import.meta.env.VITE_LITE_VERSION === "ON",
       boards: [],
       visible: false,
       mode: "template",
@@ -104,6 +105,9 @@ export default {
   },
   methods: {
     async refresh() {
+      if (this.isLite) {
+        return this.boards = this.$store.getters.currentBoards;
+      }
       const { boards } = await getBoards();
       this.boards = boards ?? this.$store.getters.currentBoards;
     },
@@ -133,7 +137,11 @@ export default {
         kanbanList: this.mode === "template" ? getTemplateList() : [],
       };
 
-      await addBoard(newBoard);
+      if (this.isLite) {
+        this.$store.commit("addKanbanBoard", newBoard);
+      } else {
+        await addBoard(newBoard);
+      }
       this.handleCancelDialog();
       await this.refresh();
     },

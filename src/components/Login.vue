@@ -17,7 +17,7 @@
           @click="isLite ? login($event) : loginApi($event)">
           <a-spin v-if="isLoading" />
           Login</a-button>
-        <div class="form-footer">
+        <div class="form-footer" v-if="!isLite">
           Don't have an account?
           <span>
             <router-link to="/signup">Sign Up Here</router-link>
