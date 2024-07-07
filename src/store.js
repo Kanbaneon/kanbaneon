@@ -10,6 +10,7 @@ import {
   deleteKanbanBoard,
   deleteKanbanList,
   deleteKanbanCard,
+  swapKanbanList
 } from "./store-api";
 
 const initialState = {
@@ -111,22 +112,7 @@ export const store = createStore({
         [userId]: currentBoards,
       });
     },
-    swapKanbanList(state, { currentListIndex, foundListIndex, currentList }) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const index = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-
-      currentBoards[index].kanbanList.splice(currentListIndex, 1);
-      currentBoards[index].kanbanList.splice(foundListIndex, 0, currentList);
-
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
+    swapKanbanList,
     async setKanbanBoards(state, boards) {
       state.kanbanBoards = boards;
       await browserDB.put(

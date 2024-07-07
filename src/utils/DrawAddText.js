@@ -1,6 +1,9 @@
 import Konva from "konva";
 import { __dnd, __konva } from "./DrawCanvas";
 import { searchIntersection } from "./DrawListItem";
+import { swapList } from "../helpers/ApiHelper";
+
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 
 export default function getAddText() {
   const text = new Konva.Text({
@@ -11,6 +14,10 @@ export default function getAddText() {
     height: 200,
     draggable: true,
   });
+
+  const kanbanList = isLite
+    ? this.$store.getters.kanbanList
+    : this.$store?.api?.board?.kanbanList;
 
   text.on("dragmove", (e) => {
     const list = e?.currentTarget?.attrs?.listDetails;
@@ -64,37 +71,59 @@ export default function getAddText() {
     __dnd.list = dndList;
   });
 
-  text.on("dragend", (e) => {
+  text.on("dragend", async (e) => {
     const list = e?.currentTarget?.attrs?.listDetails;
     const dragOverList = __dnd.list;
     if (!!dragOverList) {
-      const currentList = this.$store.getters.kanbanList.find(
+      const currentList = kanbanList.find((data) => data?.id === list?.id);
+      const currentListIndex = kanbanList.findIndex(
         (data) => data?.id === list?.id
       );
-      const currentListIndex = this.$store.getters.kanbanList.findIndex(
-        (data) => data?.id === list?.id
-      );
-      const foundListIndex = this.$store.getters.kanbanList.findIndex(
+      const foundListIndex = kanbanList.findIndex(
         (item) =>
           item?.id.toString() === dragOverList?.attrs?.id.split("LIST-")[1]
       );
 
       if (currentListIndex > -1 && foundListIndex > -1) {
-        this.$store.commit("swapKanbanList", {
-          currentListIndex,
-          foundListIndex,
-          currentList,
-        });
+        const swappedResult = isLite
+          ? this.$store.commit("swapKanbanList", {
+              currentListIndex,
+              foundListIndex,
+              currentList,
+            })
+          : await swapList(
+              this.$store.state.currentBoardID,
+              currentListIndex,
+              foundListIndex
+            );
+
+        if (swappedResult?.board) {
+          this.$store.api = {
+            board: swappedResult.board,
+          };
+        }
       } else if (
         currentListIndex > -1 &&
         dragOverList?.attrs?.id.includes("ADD-MORE")
       ) {
-        const lastIndex = this.$store.getters.kanbanList.length;
-        this.$store.commit("swapKanbanList", {
-          currentListIndex,
-          foundListIndex: lastIndex,
-          currentList,
-        });
+        const lastIndex = kanbanList.length;
+        const swappedResult = isLite
+          ? this.$store.commit("swapKanbanList", {
+              currentListIndex,
+              foundListIndex: lastIndex,
+              currentList,
+            })
+          : await swapList(
+              this.$store.state.currentBoardID,
+              currentListIndex,
+              lastIndex - 1
+            );
+
+        if (swappedResult?.board) {
+          this.$store.api = {
+            board: swappedResult.board,
+          };
+        }
       }
     }
     this.drawFns().initCanvas();

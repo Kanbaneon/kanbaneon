@@ -8,6 +8,7 @@ import {
   deleteBoard,
   deleteList,
   deleteCard,
+  swapList,
 } from "./helpers/ApiHelper";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
@@ -191,4 +192,25 @@ export const deleteKanbanCard = isLite
     }
   : async (state, card) => {
       await deleteCard(state.currentBoardID, card);
+    };
+
+export const swapKanbanList = isLite
+  ? function (state, { currentListIndex, foundListIndex, currentList }) {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      const currentBoards = allBoards[userId] ?? [];
+      const index = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+
+      currentBoards[index].kanbanList.splice(currentListIndex, 1);
+      currentBoards[index].kanbanList.splice(foundListIndex, 0, currentList);
+
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, { currentListIndex, foundListIndex }) => {
+      await swapList(state.currentBoardID, currentListIndex, foundListIndex);
     };

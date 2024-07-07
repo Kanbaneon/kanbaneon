@@ -188,6 +188,21 @@ export async function deleteCard(boardId, { listId, id }) {
   }
 }
 
+export async function swapList(boardId, from, to) {
+  try {
+    const response = await post(
+      `/boards/${boardId}/swap-lists?from=${from}&to=${to}`,
+      {},
+      token()
+    );
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 const get = async (endpoint) => {
   const response = await fetch(apiUrl + endpoint, {
     method: "GET",
