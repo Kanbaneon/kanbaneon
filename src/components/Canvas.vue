@@ -56,7 +56,7 @@ import getAddText from "../utils/DrawAddText";
 import getCard from "../utils/DrawCard";
 import getTile from "../utils/DrawTile";
 import getText from "../utils/DrawText";
-import { addList, editList, deleteList, getBoard } from '../helpers/ApiHelper';
+import { addList, addCard, editList, deleteList, getBoard } from '../helpers/ApiHelper';
 import * as uuid from "uuid";
 
 export default {
@@ -126,10 +126,25 @@ export default {
         },
       };
     },
-    handleOk() {
-      const newCard = { listId: this.addingList?.id, text: this.message };
-      this.addCardOnCanvas(newCard);
-      this.handleCancel();
+    async handleOk() {
+      try {
+        const newCard = {
+          id: uuid.v4(),
+          text: this.message,
+        };
+        const listId = this.addingList?.id;
+        const addedResult = this.isLite ? this.addCardOnCanvas({ listId, newCard }) : await addCard(this.$store.state.currentBoardID, listId, newCard);
+        if (addedResult?.board) {
+          this.$store.api = {
+            board: addedResult.board
+          };
+        }
+      } catch (ex) {
+        console.error(ex);
+      } finally {
+        this.drawFns().initCanvas();
+        this.handleCancel();
+      }
     },
     handleOkCardDialog() {
       const editingCard = {

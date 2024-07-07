@@ -86,6 +86,22 @@ export async function addList(boardId, list) {
   }
 }
 
+export async function addCard(boardId, listId, card) {
+  try {
+    const response = await post(
+      `/boards/${boardId}/lists/${listId}/cards`,
+      { ...card },
+      token()
+    );
+    if (response.success) {
+      message.success("Card is successfully added.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function editBoard(boardId, board) {
   try {
     const response = await put(`/boards/${boardId}`, { ...board }, token());

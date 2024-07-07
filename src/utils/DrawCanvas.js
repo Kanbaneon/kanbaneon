@@ -1,5 +1,4 @@
 import Konva from "konva";
-import * as uuid from "uuid";
 
 export const __konva = {
   stage: null,
@@ -11,11 +10,7 @@ export const __dnd = {
   item: null,
 };
 
-export function addCardOnCanvas({ listId, text }) {
-  const newCard = {
-    id: uuid.v4(),
-    text: text,
-  };
+export function addCardOnCanvas({ listId, newCard }) {
   this.$store.commit("addKanbanCard", { listId, newCard });
   this.drawFns().initCanvas();
 }
