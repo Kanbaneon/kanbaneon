@@ -1,13 +1,15 @@
-import { v4 } from "uuid";
 import { browserDB, INDEXED_DB } from "./helpers/IndexedDbHelper";
 import { createStore } from "vuex";
 import {
   addKanbanBoard,
   addKanbanList,
+  addKanbanCard,
   editKanbanBoard,
   editKanbanList,
+  editKanbanCard,
   deleteKanbanBoard,
   deleteKanbanList,
+  deleteKanbanCard,
 } from "./store-api";
 
 const initialState = {
@@ -56,6 +58,15 @@ export const store = createStore({
     },
   },
   mutations: {
+    addKanbanCard,
+    addKanbanList,
+    addKanbanBoard,
+    editKanbanCard,
+    editKanbanBoard,
+    editKanbanList,
+    deleteKanbanCard,
+    deleteKanbanList,
+    deleteKanbanBoard,
     swapKanbanCardExternal(state, { foundList, parentList }) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
       const userId = state.user.id;
@@ -116,71 +127,6 @@ export const store = createStore({
         [userId]: currentBoards,
       });
     },
-    deleteKanbanCard(state, { listId, id }) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const currentBoardIndex = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-      const deletingListIndex = currentBoards[
-        currentBoardIndex
-      ].kanbanList.findIndex((v) => v.id === listId);
-
-      const deletingList =
-        currentBoards[currentBoardIndex].kanbanList[deletingListIndex];
-      deletingList.children = deletingList.children.filter((v) => v.id !== id);
-
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
-    deleteKanbanList,
-    deleteKanbanBoard,
-    editKanbanCard(state, { listId, text, id }) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const currentBoardIndex = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-      const editingListIndex = currentBoards[
-        currentBoardIndex
-      ].kanbanList.findIndex((v) => v.id === listId);
-
-      const editingList =
-        currentBoards[currentBoardIndex].kanbanList[editingListIndex];
-      editingList.children.find((v) => v.id === id).text = text;
-
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
-    editKanbanBoard,
-    editKanbanList,
-    addKanbanCard(state, { listId, newCard }) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const currentBoardIndex = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-      const addingListIndex = currentBoards[
-        currentBoardIndex
-      ].kanbanList.findIndex((v) => v.id === listId);
-
-      const addingList =
-        currentBoards[currentBoardIndex].kanbanList[addingListIndex];
-      addingList.children.push(newCard);
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
-    addKanbanList,
-    addKanbanBoard,
     async setKanbanBoards(state, boards) {
       state.kanbanBoards = boards;
       await browserDB.put(

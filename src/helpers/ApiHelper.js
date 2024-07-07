@@ -130,6 +130,22 @@ export async function editList(boardId, list) {
   }
 }
 
+export async function editCard(boardId, { listId, ...card }) {
+  try {
+    const response = await put(
+      `/boards/${boardId}/lists/${listId}/cards/${card.id}`,
+      { ...card },
+      token()
+    );
+    if (response.success) {
+      message.success("Card is successfully updated.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function deleteBoard(boardId) {
   try {
     const response = await del(`/boards/${boardId}`, token());
@@ -150,6 +166,21 @@ export async function deleteList(boardId, list) {
     );
     if (response.success) {
       message.success("List is successfully deleted.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function deleteCard(boardId, { listId, id }) {
+  try {
+    const response = await del(
+      `/boards/${boardId}/lists/${listId}/cards/${id}`,
+      token()
+    );
+    if (response.success) {
+      message.success("Card is successfully deleted.");
       return response;
     }
   } catch (ex) {

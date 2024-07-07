@@ -10,6 +10,8 @@ export const __dnd = {
   item: null,
 };
 
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
+
 export function addCardOnCanvas({ listId, newCard }) {
   this.$store.commit("addKanbanCard", { listId, newCard });
   this.drawFns().initCanvas();
@@ -40,8 +42,10 @@ export function editCardOnCanvas(editingCard) {
   this.drawFns().initList();
 }
 
-export function initCanvas(data) {
-  const kanbanList = data?.board?.kanbanList ?? this.$store.getters.kanbanList;
+export function initCanvas() {
+  const kanbanList = isLite
+    ? this.$store.getters.kanbanList
+    : this.$store.api?.board?.kanbanList;
 
   const width =
     (window.matchMedia("(min-width:1440px)").matches

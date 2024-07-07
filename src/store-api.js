@@ -1,10 +1,13 @@
 import {
   addBoard,
   addList,
+  addCard,
   editBoard,
   editList,
+  editCard,
   deleteBoard,
   deleteList,
+  deleteCard,
 } from "./helpers/ApiHelper";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
@@ -40,6 +43,30 @@ export const addKanbanList = isLite
     }
   : async (state, list) => {
       await addList(state.currentBoardID, list);
+    };
+
+export const addKanbanCard = isLite
+  ? function (state, { listId, newCard }) {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      const currentBoards = allBoards[userId] ?? [];
+      const currentBoardIndex = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+      const addingListIndex = currentBoards[
+        currentBoardIndex
+      ].kanbanList.findIndex((v) => v.id === listId);
+
+      const addingList =
+        currentBoards[currentBoardIndex].kanbanList[addingListIndex];
+      addingList.children.push(newCard);
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, { listId, newCard }) => {
+      await addCard(state.currentBoardID, listId, newCard);
     };
 
 export const editKanbanBoard = isLite
@@ -81,6 +108,31 @@ export const editKanbanList = isLite
       await editList(state.currentBoardID, list);
     };
 
+export const editKanbanCard = isLite
+  ? function (state, { listId, text, id }) {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      const currentBoards = allBoards[userId] ?? [];
+      const currentBoardIndex = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+      const editingListIndex = currentBoards[
+        currentBoardIndex
+      ].kanbanList.findIndex((v) => v.id === listId);
+
+      const editingList =
+        currentBoards[currentBoardIndex].kanbanList[editingListIndex];
+      editingList.children.find((v) => v.id === id).text = text;
+
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, card) => {
+      await editCard(state.currentBoardID, card);
+    };
+
 export const deleteKanbanBoard = isLite
   ? function (state, boardId) {
       const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
@@ -91,7 +143,7 @@ export const deleteKanbanBoard = isLite
         [userId]: allBoards[userId],
       });
     }
-  : async (state, board) => {
+  : async (state) => {
       await deleteBoard(state.currentBoardID);
     };
 
@@ -114,4 +166,29 @@ export const deleteKanbanList = isLite
     }
   : async (state, list) => {
       await deleteList(state.currentBoardID, list);
+    };
+
+export const deleteKanbanCard = isLite
+  ? function (state, { listId, id }) {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      const currentBoards = allBoards[userId] ?? [];
+      const currentBoardIndex = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+      const deletingListIndex = currentBoards[
+        currentBoardIndex
+      ].kanbanList.findIndex((v) => v.id === listId);
+
+      const deletingList =
+        currentBoards[currentBoardIndex].kanbanList[deletingListIndex];
+      deletingList.children = deletingList.children.filter((v) => v.id !== id);
+
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, card) => {
+      await deleteCard(state.currentBoardID, card);
     };

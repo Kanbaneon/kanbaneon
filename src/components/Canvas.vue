@@ -56,7 +56,12 @@ import getAddText from "../utils/DrawAddText";
 import getCard from "../utils/DrawCard";
 import getTile from "../utils/DrawTile";
 import getText from "../utils/DrawText";
-import { addList, addCard, editList, deleteList, getBoard } from '../helpers/ApiHelper';
+import {
+  addList, addCard,
+  editList, editCard,
+  deleteList, deleteCard,
+  getBoard
+} from '../helpers/ApiHelper';
 import * as uuid from "uuid";
 
 export default {
@@ -146,14 +151,25 @@ export default {
         this.handleCancel();
       }
     },
-    handleOkCardDialog() {
-      const editingCard = {
-        id: this.cardDialog.editingCard.id,
-        listId: this.cardDialog.editingCard.parentList.id,
-        text: this.cardDialog.editingCard.text,
-      };
-      this.editCardOnCanvas(editingCard);
-      this.handleCancelCardDialog();
+    async handleOkCardDialog() {
+      try {
+        const editingCard = {
+          id: this.cardDialog.editingCard.id,
+          listId: this.cardDialog.editingCard.parentList.id,
+          text: this.cardDialog.editingCard.text,
+        };
+        const editedResult = this.isLite ? this.editCardOnCanvas(editingCard) : await editCard(this.$store.state.currentBoardID, editingCard);
+        if (editedResult?.board) {
+          this.$store.api = {
+            board: editedResult.board
+          };
+        }
+      } catch (ex) {
+        console.error(ex);
+      } finally {
+        this.drawFns().initCanvas();
+        this.handleCancelCardDialog();
+      }
     },
     async handleOkListDialog() {
       try {
@@ -195,25 +211,41 @@ export default {
       }
     },
     async handleDeleteList() {
-      const deletingList = {
-        listId: this.listDialog.editingList.id,
-      };
-      const deletedResult = this.isLite ? this.deleteListOnCanvas(deletingList) : await deleteList(this.$store.state.currentBoardID, deletingList);
-      if (deletedResult?.board) {
-        this.$store.api = {
-          board: deletedResult.board
+      try {
+        const deletingList = {
+          listId: this.listDialog.editingList.id,
         };
+        const deletedResult = this.isLite ? this.deleteListOnCanvas(deletingList) : await deleteList(this.$store.state.currentBoardID, deletingList);
+        if (deletedResult?.board) {
+          this.$store.api = {
+            board: deletedResult.board
+          };
+        }
+      } catch (ex) {
+        console.error(ex);
+      } finally {
         this.drawFns().initCanvas();
+        this.handleCancelListDialog();
       }
-      this.handleCancelListDialog();
     },
-    handleDeleteCard() {
-      const deletingCard = {
-        id: this.cardDialog.editingCard.id,
-        listId: this.cardDialog.editingCard.parentList.id,
-      };
-      this.deleteCard(deletingCard);
-      this.handleCancelCardDialog();
+    async handleDeleteCard() {
+      try {
+        const deletingCard = {
+          id: this.cardDialog.editingCard.id,
+          listId: this.cardDialog.editingCard.parentList.id,
+        };
+        const deletedResult = this.isLite ? this.deleteCardOnCanvas(deletingCard) : await deleteCard(this.$store.state.currentBoardID, deletingCard);
+        if (deletedResult?.board) {
+          this.$store.api = {
+            board: deletedResult.board
+          };
+        }
+      } catch (ex) {
+        console.error(ex);
+      } finally {
+        this.drawFns().initCanvas();
+        this.handleCancelCardDialog();
+      }
     },
     handleNameChange(e) {
       this.listDialog.editingList.name = e.target.value;
