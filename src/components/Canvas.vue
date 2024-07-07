@@ -56,7 +56,7 @@ import getAddText from "../utils/DrawAddText";
 import getCard from "../utils/DrawCard";
 import getTile from "../utils/DrawTile";
 import getText from "../utils/DrawText";
-import { addList, deleteList, getBoard } from '../helpers/ApiHelper';
+import { addList, editList, deleteList, getBoard } from '../helpers/ApiHelper';
 import * as uuid from "uuid";
 
 export default {
@@ -159,18 +159,23 @@ export default {
             this.$store.api = {
               board: addedResult.board
             };
-            this.drawFns().initCanvas();
           }
         } else {
           const editingList = {
             listId: this.listDialog.editingList.id,
             name: this.listDialog.editingList.name,
           };
-          this.editListOnCanvas(editingList);
+          const editedResult = this.isLite ? this.editListOnCanvas(editingList) : await editList(this.$store.state.currentBoardID, editingList);
+          if (editedResult?.board) {
+            this.$store.api = {
+              board: editedResult.board
+            };
+          }
         }
       } catch (ex) {
         console.error(ex);
       } finally {
+        this.drawFns().initCanvas();
         this.handleCancelListDialog();
       }
     },

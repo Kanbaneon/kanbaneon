@@ -98,6 +98,22 @@ export async function editBoard(boardId, board) {
   }
 }
 
+export async function editList(boardId, list) {
+  try {
+    const response = await put(
+      `/boards/${boardId}/lists/${list.listId}`,
+      { ...list },
+      token()
+    );
+    if (response.success) {
+      message.success("List is successfully updated.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function deleteBoard(boardId) {
   try {
     const response = await del(`/boards/${boardId}`, token());
