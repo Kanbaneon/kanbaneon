@@ -1,7 +1,8 @@
 import Konva from "konva";
 import { __dnd, __konva } from "./DrawCanvas";
 import { searchIntersection } from "./DrawListItem";
-import { store } from "../store";
+
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 
 export default function getTile({ largestChildren, height }) {
   const tile = new Konva.Rect({
@@ -13,6 +14,10 @@ export default function getTile({ largestChildren, height }) {
     shadowBlur: 1,
     draggable: true,
   });
+
+  const kanbanList = isLite
+  ? this.$store.getters.kanbanList
+  : this.$store?.api?.board?.kanbanList;
 
   tile.on("dragmove", (e) => {
     const list = e?.currentTarget?.attrs?.listDetails;
@@ -70,13 +75,13 @@ export default function getTile({ largestChildren, height }) {
     const list = e?.currentTarget?.attrs?.listDetails;
     const dragOverList = __dnd.list;
     if (!!dragOverList) {
-      const currentList = this.$store.getters.kanbanList.find(
+      const currentList = kanbanList.find(
         (data) => data?.id === list?.id
       );
-      const currentListIndex = this.$store.getters.kanbanList.findIndex(
+      const currentListIndex = kanbanList.findIndex(
         (data) => data?.id === list?.id
       );
-      const foundListIndex = this.$store.getters.kanbanList.findIndex(
+      const foundListIndex = kanbanList.findIndex(
         (item) =>
           item?.id.toString() === dragOverList?.attrs?.id.split("LIST-")[1]
       );
@@ -91,7 +96,7 @@ export default function getTile({ largestChildren, height }) {
         currentListIndex > -1 &&
         dragOverList?.attrs?.id.includes("ADD-MORE")
       ) {
-        const lastIndex = this.$store.getters.kanbanList.length;
+        const lastIndex = kanbanList.length;
         this.$store.commit("swapKanbanList", {
           currentListIndex,
           foundListIndex: lastIndex,

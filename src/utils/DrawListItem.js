@@ -1,5 +1,7 @@
 import { __dnd, __konva } from "./DrawCanvas";
 
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
+
 export function searchIntersection(r2) {
   const allRects = __konva.stage.find("Rect");
 
@@ -55,6 +57,9 @@ export function initListItem(list, x, e) {
   const standardRect = this.drawFns().getCard({ x });
   const standardText = this.drawFns().getText({ x });
 
+  const kanbanList = isLite
+    ? this.$store.getters.kanbanList
+    : this.$store?.api?.board?.kanbanList;
   let yCount = 70;
 
   const existingCards = [
@@ -100,9 +105,7 @@ export function initListItem(list, x, e) {
     titleText.on("dragend", (e) => {
       const dragOverList = __dnd.list;
       const dragOverItem = __dnd.item;
-      const parentList = this.$store.getters.kanbanList.find(
-        (data) => data?.id === list?.id
-      );
+      const parentList = kanbanList.find((data) => data?.id === list?.id);
 
       if (!dragOverList) {
         const parentItemIndex = parentList.children.findIndex(
@@ -119,7 +122,7 @@ export function initListItem(list, x, e) {
       }
 
       if (!!dragOverList) {
-        const foundList = this.$store.getters.kanbanList.find(
+        const foundList = kanbanList.find(
           (data) =>
             data?.id.toString() === dragOverList?.attrs?.id.split("LIST-")[1]
         );
