@@ -10,7 +10,9 @@ import {
   deleteKanbanBoard,
   deleteKanbanList,
   deleteKanbanCard,
-  swapKanbanList
+  swapKanbanList,
+  swapKanbanCardExternal,
+  swapKanbanCardInternal,
 } from "./store-api";
 
 const initialState = {
@@ -68,51 +70,9 @@ export const store = createStore({
     deleteKanbanCard,
     deleteKanbanList,
     deleteKanbanBoard,
-    swapKanbanCardExternal(state, { foundList, parentList }) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const currentBoardIndex = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-      const parentListIndex = currentBoards[
-        currentBoardIndex
-      ].kanbanList.findIndex((v) => v.id === parentList.id);
-      const foundListIndex = currentBoards[
-        currentBoardIndex
-      ].kanbanList.findIndex((v) => v.id === foundList.id);
-
-      currentBoards[currentBoardIndex].kanbanList[parentListIndex] = parentList;
-      currentBoards[currentBoardIndex].kanbanList[foundListIndex] = foundList;
-
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
-    swapKanbanCardInternal(state, { parentItemIndex, list, card }) {
-      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
-      const userId = state.user.id;
-      const currentBoards = allBoards[userId] ?? [];
-      const currentBoardIndex = currentBoards.findIndex(
-        (v) => v.id === state.currentBoardID
-      );
-
-      const kanbanList = currentBoards[currentBoardIndex].kanbanList;
-      const kanbanListIndex = kanbanList.findIndex((v) => v.id === list?.id);
-      currentBoards[currentBoardIndex].kanbanList[kanbanListIndex].children =
-        kanbanList[kanbanListIndex].children.filter((v) => v.id !== card.id);
-
-      currentBoards[currentBoardIndex].kanbanList[
-        kanbanListIndex
-      ].children.splice(parentItemIndex, 0, card);
-
-      this.commit("setKanbanBoards", {
-        ...allBoards,
-        [userId]: currentBoards,
-      });
-    },
     swapKanbanList,
+    swapKanbanCardExternal,
+    swapKanbanCardInternal,
     async setKanbanBoards(state, boards) {
       state.kanbanBoards = boards;
       await browserDB.put(

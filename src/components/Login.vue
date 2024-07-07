@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="loginApi($event)">
+    <form @submit.prevent="isLite ? login($event) : loginApi($event)">
       <a-card class="card">
         <h2 class="title">
           KAN<span class="subtitle">BANEON</span>

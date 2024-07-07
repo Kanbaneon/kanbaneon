@@ -28,7 +28,7 @@
   </a-modal>
   <a-modal :title="cardDialog.title" :visible="cardDialog.visible" @ok="handleOkCardDialog"
     @cancel="handleCancelCardDialog">
-    <textarea class="ant-input edit-card-textarea" placeholder="Type here..." v-model="cardDialog.editingCard.text" />
+    <textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..." v-model="cardDialog.editingCard.text" />
     <template v-slot:footer>
       <a-button class="btn-danger" type="danger" @click="handleDeleteCard">Delete</a-button>
       <a-button key="back" @click="handleCancelCardDialog"> Cancel </a-button>
