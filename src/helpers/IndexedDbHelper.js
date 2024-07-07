@@ -63,6 +63,11 @@ class IndexedDbHelper {
     }
   }
 
+  clearDatabase() {
+    const { name } = INDEXED_DB;
+    this.indexedDB.deleteDatabase(name);
+  }
+
   onCloseListener() {
     this.isOpened = false;
   }
@@ -181,7 +186,4 @@ class IndexedDbHelper {
     });
 }
 
-const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
-export const browserDB = isLite
-  ? new IndexedDbHelper()
-  : { get: () => {}, put: () => {} };
+export const browserDB = new IndexedDbHelper();

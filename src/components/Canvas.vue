@@ -238,7 +238,7 @@ export default {
       }
     }
     else {
-      this.fetchData();
+      await this.fetchData();
     }
     this.drawFns().initCanvas();
     setInterval(() => { }, 5000);

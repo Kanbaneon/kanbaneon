@@ -7,7 +7,7 @@ import {
   editKanbanBoard,
   editKanbanList,
   deleteKanbanBoard,
-  deleteKanbanList
+  deleteKanbanList,
 } from "./store-api";
 
 const initialState = {
@@ -250,4 +250,8 @@ export async function setUpDB() {
   if (user?.isLoggedIn && user?.username) {
     await setUpBoards();
   }
+}
+
+export async function clearDB() {
+  browserDB.clearDatabase();
 }
