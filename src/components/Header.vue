@@ -57,7 +57,7 @@
   <h3>
     <a-breadcrumb>
       <a-breadcrumb-item><a href="/">Home</a></a-breadcrumb-item>
-      <a-breadcrumb-item :key="currentBoard.name">{{ currentBoard.name }}</a-breadcrumb-item>
+      <a-breadcrumb-item :key="currentBoard?.name">{{ currentBoard?.name }}</a-breadcrumb-item>
     </a-breadcrumb>
   </h3>
 </template>
@@ -128,6 +128,7 @@ export default {
       this.$router.push("/");
     },
     handleDirectHome() {
+      this.currentBoard = {};
       this.$router.push("/");
     },
     async handleOkEditBoard() {

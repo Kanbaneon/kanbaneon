@@ -1,3 +1,4 @@
+import { swapCardExternal, swapCardInternal } from "../helpers/ApiHelper";
 import { __dnd, __konva } from "./DrawCanvas";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
@@ -102,7 +103,7 @@ export function initListItem(list, x, e) {
       __dnd.item = item;
     });
 
-    titleText.on("dragend", (e) => {
+    titleText.on("dragend", async (e) => {
       const dragOverList = __dnd.list;
       const dragOverItem = __dnd.item;
       const parentList = kanbanList.find((data) => data?.id === list?.id);
@@ -112,12 +113,28 @@ export function initListItem(list, x, e) {
           (item) =>
             item?.id.toString() === dragOverItem?.attrs?.id.split("CARD-")[1]
         );
+        const currentIndex = parentList.children.findIndex(
+          (item) => item?.id.toString() === card?.id
+        );
         if (parentItemIndex > -1) {
-          this.$store.commit("swapKanbanCardInternal", {
-            parentItemIndex,
-            list,
-            card,
-          });
+          const swappedResult = isLite
+            ? this.$store.commit("swapKanbanCardInternal", {
+                parentItemIndex,
+                list,
+                card,
+              })
+            : await swapCardInternal(
+                this.$store.state.currentBoardID,
+                parentList?.id,
+                currentIndex,
+                parentItemIndex
+              );
+
+          if (swappedResult?.board) {
+            this.$store.api = {
+              board: swappedResult.board,
+            };
+          }
         }
       }
 
@@ -134,27 +151,40 @@ export function initListItem(list, x, e) {
           );
 
         if (
-          !!parentList &&
-          parentList.children.map((v) => v.id).includes(card.id)
-        ) {
-          parentList.children = parentList.children.filter(
-            (v) => v.id !== card.id
-          );
-        }
-
-        if (
           !!foundList &&
           !foundList.children.map((v) => v.id).includes(card.id)
         ) {
+          if (
+            !!parentList &&
+            parentList.children.map((v) => v.id).includes(card.id)
+          ) {
+            parentList.children = parentList.children.filter(
+              (v) => v.id !== card.id
+            );
+          }
+          
           if (foundItemIndex > -1) {
             foundList.children.splice(foundItemIndex, 0, card);
           } else {
             foundList.children.push(card);
           }
-          this.$store.commit("swapKanbanCardExternal", {
-            foundList,
-            parentList,
-          });
+          const swappedResult = isLite
+            ? this.$store.commit("swapKanbanCardExternal", {
+                parentList,
+                foundList,
+              })
+            : await swapCardExternal(
+                this.$store.state.currentBoardID,
+                parentList,
+                foundList
+              );
+
+          if (swappedResult?.board) {
+            this.$store.api = {
+              board: swappedResult.board,
+            };
+          }
+
           cardRect.destroy();
           titleText.destroy();
         }

@@ -203,6 +203,36 @@ export async function swapList(boardId, from, to) {
   }
 }
 
+export async function swapCardExternal(boardId, parentList, foundList) {
+  try {
+    const response = await post(
+      `/boards/${boardId}/swap-cards-external`,
+      { parentList, foundList },
+      token()
+    );
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function swapCardInternal(boardId, listId, from, to) {
+  try {
+    const response = await post(
+      `/boards/${boardId}/swap-cards-internal/${listId}?from=${from}&to=${to}`,
+      {},
+      token()
+    );
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 const get = async (endpoint) => {
   const response = await fetch(apiUrl + endpoint, {
     method: "GET",

@@ -3,74 +3,111 @@ import * as VueRouter from "vue-router";
 import { store } from "./store";
 import { reauth } from "./helpers/ApiHelper";
 
-const loginGuard = async () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    try {
-      const result = await reauth(token);
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
+const token = isLite ? "LITE" : localStorage.getItem("token");
 
-      if (result?.success) {
-        store.state.user = {
-          username: result.reauth.username,
-          isLoggedIn: true,
-        };
+const loginGuard = isLite
+  ? () => {
+      if (!store.state.user.isLoggedIn) {
+        return { path: "/login" };
       }
-    } catch (ex) {
-      console.error(ex);
-      return { path: "/login" };
+      return true;
     }
-  }
+  : async () => {
+      if (token) {
+        try {
+          const result = await reauth(token);
 
-  if (!store.state.user.isLoggedIn) {
-    return { path: "/login" };
-  }
-  return true;
-};
-
-const logoutGuard = async () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    try {
-      const result = await reauth(token);
-
-      if (result?.success) {
-        store.state.user = {
-          username: result.reauth.username,
-          isLoggedIn: true,
-        };
-      } else {
-        store.commit("setUser", {
-          isLoggedIn: false,
-          username: "",
-          id: undefined,
-        });
-        localStorage.removeItem("token");
+          if (result?.success) {
+            store.state.user = {
+              username: result.reauth.username,
+              isLoggedIn: true,
+            };
+          } else {
+            store.commit("setUser", {
+              isLoggedIn: false,
+              username: "",
+              id: undefined,
+            });
+            localStorage.removeItem("token");
+            return { path: "/login" };
+          }
+        } catch (ex) {
+          console.error(ex);
+          return { path: "/login" };
+        }
       }
-    } catch (ex) {
-      console.error(ex);
+
+      if (!store.state.user.isLoggedIn) {
+        return { path: "/login" };
+      }
+      return true;
+    };
+
+const logoutGuard = isLite
+  ? () => {
+      if (store.state.user.isLoggedIn) {
+        return { path: "/" };
+      }
+      return true;
     }
-  }
+  : async () => {
+      if (token) {
+        try {
+          const result = await reauth(token);
 
-  if (store.state.user.isLoggedIn) {
-    return { path: "/" };
-  }
-  return true;
-};
+          if (result?.success) {
+            store.state.user = {
+              username: result.reauth.username,
+              isLoggedIn: true,
+            };
+          } else {
+            store.commit("setUser", {
+              isLoggedIn: false,
+              username: "",
+              id: undefined,
+            });
+            localStorage.removeItem("token");
+          }
+        } catch (ex) {
+          console.error(ex);
+        }
+      }
 
-const sessionGuard = async () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    const result = await reauth(token);
+      if (store.state.user.isLoggedIn) {
+        return { path: "/" };
+      }
+      return true;
+    };
 
-    if (result?.success) {
-      store.state.user = {
-        username: result.reauth.username,
-        isLoggedIn: true,
-      };
+const sessionGuard = isLite
+  ? () => {
+      if (!store.state.user.isLoggedIn) {
+        return { path: "/login" };
+      }
+      return true;
     }
-  }
-  return true;
-};
+  : async () => {
+      if (token) {
+        const result = await reauth(token);
+
+        if (result?.success) {
+          store.state.user = {
+            username: result.reauth.username,
+            isLoggedIn: true,
+          };
+        } else {
+          store.commit("setUser", {
+            isLoggedIn: false,
+            username: "",
+            id: undefined,
+          });
+          localStorage.removeItem("token");
+          return { path: "/login" };
+        }
+      }
+      return true;
+    };
 
 const routes = [
   {

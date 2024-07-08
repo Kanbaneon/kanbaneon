@@ -9,6 +9,7 @@ import {
   deleteList,
   deleteCard,
   swapList,
+  swapCardExternal,
 } from "./helpers/ApiHelper";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
@@ -214,3 +215,55 @@ export const swapKanbanList = isLite
   : async (state, { currentListIndex, foundListIndex }) => {
       await swapList(state.currentBoardID, currentListIndex, foundListIndex);
     };
+
+export const swapKanbanCardExternal = isLite
+  ? function (state, { foundList, parentList }) {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      const currentBoards = allBoards[userId] ?? [];
+      const currentBoardIndex = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+      const parentListIndex = currentBoards[
+        currentBoardIndex
+      ].kanbanList.findIndex((v) => v.id === parentList.id);
+      const foundListIndex = currentBoards[
+        currentBoardIndex
+      ].kanbanList.findIndex((v) => v.id === foundList.id);
+
+      currentBoards[currentBoardIndex].kanbanList[parentListIndex] = parentList;
+      currentBoards[currentBoardIndex].kanbanList[foundListIndex] = foundList;
+
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, { foundList, parentList }) => {
+      await swapCardExternal(state.currentBoardID, parentList, foundList);
+    };
+
+export const swapKanbanCardInternal = isLite
+  ? function (state, { parentItemIndex, list, card }) {
+      const allBoards = JSON.parse(JSON.stringify(state.kanbanBoards ?? {}));
+      const userId = state.user.id;
+      const currentBoards = allBoards[userId] ?? [];
+      const currentBoardIndex = currentBoards.findIndex(
+        (v) => v.id === state.currentBoardID
+      );
+
+      const kanbanList = currentBoards[currentBoardIndex]?.kanbanList ?? [];
+      const kanbanListIndex = kanbanList.findIndex((v) => v.id === list?.id);
+      currentBoards[currentBoardIndex].kanbanList[kanbanListIndex].children =
+        kanbanList[kanbanListIndex].children.filter((v) => v.id !== card.id);
+
+      currentBoards[currentBoardIndex].kanbanList[
+        kanbanListIndex
+      ].children.splice(parentItemIndex, 0, card);
+
+      this.commit("setKanbanBoards", {
+        ...allBoards,
+        [userId]: currentBoards,
+      });
+    }
+  : async (state, { parentItemIndex, list, card }) => {};
