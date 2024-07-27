@@ -14,9 +14,9 @@ export async function login(username, password) {
   }
 }
 
-export async function signUp(username, password) {
+export async function signUp(username, email, password) {
   try {
-    const response = await post("/signup", { username, password });
+    const response = await post("/signup", { username, email, password });
     if (response.success) {
       return response;
     }

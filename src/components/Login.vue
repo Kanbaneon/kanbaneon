@@ -7,9 +7,14 @@
           <span class="version" v-if="isLite"> Lite</span>
         </h2>
         <div class="input-wrapper">
-          <a-input v-model:value="username" placeholder="Enter your username" />
+          <a-input v-model:value="username" placeholder="Enter your username or email" />
           <label class="error-label">{{ error.username }}&nbsp;</label>
-          <a-input v-if="!isLite" v-model:value="password" placeholder="Enter your password" type="password" />
+          <a-input-password v-if="!isLite" v-model:value="password" placeholder="Enter your password" type="password">
+            <template #iconRender="v">
+              <EyeTwoTone v-if="v"></EyeTwoTone>
+              <EyeInvisibleOutlined v-else></EyeInvisibleOutlined>
+            </template>
+          </a-input-password>
           <label v-if="!isLite" class="error-label">{{ error.password }}&nbsp;</label>
         </div>
         <input type="submit" hidden />
@@ -33,6 +38,7 @@ import { v4 } from "uuid";
 import { INDEXED_DB, browserDB } from "../helpers/IndexedDbHelper";
 import { getExistingUser } from "../store";
 import { login } from "../helpers/ApiHelper";
+import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons-vue';
 
 export default {
   data: () => {
@@ -44,6 +50,9 @@ export default {
       password: "",
       error: { username: "", password: "" },
     };
+  },
+  components: {
+    EyeTwoTone, EyeInvisibleOutlined
   },
   methods: {
     async login(e) {
@@ -123,6 +132,10 @@ export default {
 }
 
 .ant-input {
+  padding: 8px 8px;
+}
+
+.ant-input-password {
   padding: 8px 8px;
 }
 

@@ -1,16 +1,28 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="signUp($event)">
+    <a-form ref="formRef" :model="formState" @finish="signUp">
       <a-card class="card">
         <h2 class="title">
           KAN<span class="subtitle">BANEON</span>
           <span class="version" v-if="isLite"> Lite</span>
         </h2>
         <div class="input-wrapper">
-          <a-input v-model:value="username" placeholder="Enter your username" />
-          <label class="error-label">{{ error.username }}&nbsp;</label>
-          <a-input v-if="!isLite" v-model:value="password" placeholder="Enter your password" type="password" />
-          <label v-if="!isLite" class="error-label">{{ error.password }}&nbsp;</label>
+          <a-form-item :name="['username']" :rules="[{ required: true, message: 'Username is required.' }]">
+            <a-input v-model:value="formState.username" placeholder="Enter your username" />
+          </a-form-item>
+          <a-form-item :name="['email']"
+            :rules="[{ required: true, message: 'Email is required.' }, { type: 'email', message: 'This is not a valid email.' }]">
+            <a-input v-model:value="formState.email" placeholder="Enter your email" />
+          </a-form-item>
+          <a-form-item :name="['password']" :rules="[{ required: true, message: 'Password is required.' }]">
+            <a-input-password v-if="!isLite" v-model:value="formState.password" placeholder="Enter your password"
+              type="password">
+              <template #iconRender="v">
+                <EyeTwoTone v-if="v"></EyeTwoTone>
+                <EyeInvisibleOutlined v-else></EyeInvisibleOutlined>
+              </template>
+            </a-input-password>
+          </a-form-item>
         </div>
         <input type="submit" hidden />
         <a-button :disabled="isLoading" type="primary" size="large" block @click="signUp($event)">
@@ -23,12 +35,13 @@
           </span>
         </div>
       </a-card>
-    </form>
+    </a-form>
   </div>
 </template>
 
 <script lang="ts">
 import { signUp } from "../helpers/ApiHelper";
+import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons-vue';
 
 export default {
   data: () => {
@@ -36,17 +49,22 @@ export default {
       // @ts-ignore
       isLite: import.meta.env.VITE_LITE_VERSION === "ON",
       isLoading: false,
-      username: "",
-      password: "",
-      error: { username: "", password: "" },
+      formState: {
+        username: "",
+        email: "",
+        password: "",
+      }
     };
   },
+  components: {
+    EyeTwoTone, EyeInvisibleOutlined
+  },
   methods: {
-    async signUp(e) {
-      e.preventDefault();
-      this.isLoading = true;
+    async signUp() {
       try {
-        const result = await signUp(this.username, this.password);
+        await this.$refs.formRef.validateFields();
+        this.isLoading = true;
+        const result = await signUp(this.formState.username, this.formState.email, this.formState.password);
         if (result?.success) {
           this.$router.push("/login");
         }
@@ -95,6 +113,10 @@ export default {
 }
 
 .ant-input {
+  padding: 8px 8px;
+}
+
+.ant-input-password {
   padding: 8px 8px;
 }
 
