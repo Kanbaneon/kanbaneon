@@ -4,7 +4,7 @@ import { store } from "./store";
 import { reauth } from "./helpers/ApiHelper";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
-const token = isLite ? "LITE" : localStorage.getItem("token");
+const getToken = () => (isLite ? "LITE" : localStorage.getItem("token"));
 
 const loginGuard = isLite
   ? () => {
@@ -14,6 +14,7 @@ const loginGuard = isLite
       return true;
     }
   : async () => {
+      const token = getToken();
       if (token) {
         try {
           const result = await reauth(token);
@@ -52,6 +53,7 @@ const logoutGuard = isLite
       return true;
     }
   : async () => {
+      const token = getToken();
       if (token) {
         try {
           const result = await reauth(token);
@@ -88,6 +90,7 @@ const sessionGuard = isLite
       return true;
     }
   : async () => {
+      const token = getToken();
       if (token) {
         const result = await reauth(token);
 
