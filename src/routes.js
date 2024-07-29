@@ -99,6 +99,7 @@ const sessionGuard = isLite
             username: result.reauth.username,
             isLoggedIn: true,
           };
+          return true;
         } else {
           store.commit("setUser", {
             isLoggedIn: false,
@@ -108,8 +109,9 @@ const sessionGuard = isLite
           localStorage.removeItem("token");
           return { path: "/login" };
         }
+      } else {
+        return { path: "/login" };
       }
-      return true;
     };
 
 export const routes = [
@@ -144,9 +146,7 @@ export const routes = [
   {
     path: "/profile",
     name: "Your Profile",
-    component: defineAsyncComponent({
-      loader: () => import("./components/Profile.vue"),
-    }),
+    component: () => import("./components/Profile.vue"),
     beforeEnter: sessionGuard,
     props: true,
   },

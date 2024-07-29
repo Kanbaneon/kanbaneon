@@ -36,6 +36,28 @@ export async function reauth(token) {
   }
 }
 
+export async function getProfile() {
+  try {
+    const response = await get(`/profile`);
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function editProfile(profile) {
+  try {
+    const response = await put(`/profile`, profile);
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function getBoard(id) {
   try {
     const response = await get(`/boards/${id}`);
