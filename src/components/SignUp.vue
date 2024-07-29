@@ -8,15 +8,26 @@
         </h2>
         <div class="input-wrapper">
           <a-form-item :name="['username']" :rules="[{ required: true, message: 'Username is required.' }]">
-            <a-input v-model:value="formState.username" placeholder="Enter your username" />
+            <a-input v-model:value="formState.username" placeholder="Enter your username">
+              <template #prefix>
+                <UserOutlined class="site-form-item-icon" />
+              </template>
+            </a-input>
           </a-form-item>
           <a-form-item :name="['email']"
             :rules="[{ required: true, message: 'Email is required.' }, { type: 'email', message: 'This is not a valid email.' }]">
-            <a-input v-model:value="formState.email" placeholder="Enter your email" />
+            <a-input v-model:value="formState.email" placeholder="Enter your email">
+              <template #prefix>
+                <MailOutlined class="site-form-item-icon" />
+              </template>
+            </a-input>
           </a-form-item>
           <a-form-item :name="['password']" :rules="[{ required: true, message: 'Password is required.' }]">
             <a-input-password v-if="!isLite" v-model:value="formState.password" placeholder="Enter your password"
               type="password">
+              <template #prefix>
+                <LockOutlined class="site-form-item-icon" />
+              </template>
               <template #iconRender="v">
                 <EyeTwoTone v-if="v"></EyeTwoTone>
                 <EyeInvisibleOutlined v-else></EyeInvisibleOutlined>
@@ -41,7 +52,7 @@
 
 <script lang="ts">
 import { signUp } from "../helpers/ApiHelper";
-import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons-vue';
+import { EyeTwoTone, EyeInvisibleOutlined, UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons-vue';
 
 export default {
   data: () => {
@@ -57,7 +68,7 @@ export default {
     };
   },
   components: {
-    EyeTwoTone, EyeInvisibleOutlined
+    EyeTwoTone, EyeInvisibleOutlined, UserOutlined, MailOutlined, LockOutlined
   },
   methods: {
     async signUp() {
@@ -116,6 +127,7 @@ export default {
   padding: 8px 8px;
 }
 
+.ant-input-affix-wrapper,
 .ant-input-password {
   padding: 8px 8px;
 }

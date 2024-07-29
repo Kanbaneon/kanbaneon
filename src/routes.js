@@ -112,7 +112,7 @@ const sessionGuard = isLite
       return true;
     };
 
-const routes = [
+export const routes = [
   {
     path: "/",
     component: () => import("./components/Home.vue"),
@@ -131,11 +131,21 @@ const routes = [
     beforeEnter: logoutGuard,
     props: true,
   },
-  { path: "/board", redirect: "/" },
+  { path: "/board", redirect: "/", name: "Your boards" },
   {
     path: "/board/:id",
     component: defineAsyncComponent({
       loader: () => import("./components/Canvas.vue"),
+    }),
+    name: "Your boards",
+    beforeEnter: sessionGuard,
+    props: true,
+  },
+  {
+    path: "/profile",
+    name: "Your Profile",
+    component: defineAsyncComponent({
+      loader: () => import("./components/Profile.vue"),
     }),
     beforeEnter: sessionGuard,
     props: true,

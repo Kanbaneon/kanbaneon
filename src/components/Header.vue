@@ -15,6 +15,7 @@
     <a-col :span="1" v-if="$store.state.user.isLoggedIn">
       <a-popover :title="$store.state.user.username" trigger="click">
         <template #content>
+          <user-menu />
           <p><a-button block @click="logout">Logout</a-button></p>
         </template>
         <div class="avatar" :size="64">
@@ -57,7 +58,10 @@
   <h3>
     <a-breadcrumb>
       <a-breadcrumb-item><a href="/">Home</a></a-breadcrumb-item>
-      <a-breadcrumb-item :key="currentBoard?.name">{{ currentBoard?.name }}</a-breadcrumb-item>
+      <a-breadcrumb-item :key="$route.path">{{ $route.name }}</a-breadcrumb-item>
+      <a-breadcrumb-item v-if="currentBoard?.name" :key="currentBoard?.name">
+        {{ currentBoard?.name
+        }}</a-breadcrumb-item>
     </a-breadcrumb>
   </h3>
 </template>
@@ -66,6 +70,7 @@
 import PlusIcon from "../assets/PlusIcon.vue";
 import DotsIcon from "../assets/DotsIcon.vue";
 import UserIcon from "../assets/UserIcon.vue";
+import UserMenu from "./UserMenu.vue";
 import { addListOnCanvas } from "../utils/DrawCanvas";
 import { deleteBoard, getBoard } from "../helpers/ApiHelper";
 
@@ -98,6 +103,7 @@ export default {
     PlusIcon,
     UserIcon,
     DotsIcon,
+    UserMenu
   },
   watch: {
     async $route(to, from) {
@@ -278,6 +284,7 @@ h3 {
   display: flex;
 }
 
+.ant-breadcrumb,
 .ant-breadcrumb a {
   color: whitesmoke;
   font-size: 20px;

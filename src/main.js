@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import Antd from "ant-design-vue";
-import "ant-design-vue/dist/antd.css";
+import "ant-design-vue/dist/reset.css";
 import { router } from "./routes";
 import { clearDB, setUpDB, store } from "./store";
 
