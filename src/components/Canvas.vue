@@ -1,10 +1,9 @@
 <template>
-  <div class="canvas-wrapper">
-    <div id="kanbaneon-canvas"></div>
-  </div>
-  <div v-if="isLoading" class="loading-wrapper">
-    <div>Loading....</div>
-  </div>
+  <a-spin :spinning="isLoading" tip="Loading..." size="large">
+    <div class="canvas-wrapper">
+      <div id="kanbaneon-canvas"></div>
+    </div>
+  </a-spin>
   <a-modal title="Enter the message of new item" :visible="visible" @ok="handleOk" @cancel="handleCancel">
     <textarea rows="8" class="ant-input" placeholder="Type here..." v-model="message" />
     <template v-slot:footer>
@@ -28,7 +27,8 @@
   </a-modal>
   <a-modal :title="cardDialog.title" :visible="cardDialog.visible" @ok="handleOkCardDialog"
     @cancel="handleCancelCardDialog">
-    <textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..." v-model="cardDialog.editingCard.text" />
+    <textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..."
+      v-model="cardDialog.editingCard.text" />
     <template v-slot:footer>
       <a-button class="btn-danger" type="danger" @click="handleDeleteCard">Delete</a-button>
       <a-button key="back" @click="handleCancelCardDialog"> Cancel </a-button>
@@ -258,7 +258,6 @@ export default {
         this.isLoading = true;
         const id = this.$route.params.id;
         const data = await getBoard(id);
-        this.isLoading = false;
         if (!data?.board) {
           return this.$router.push("/");
         }
@@ -266,16 +265,20 @@ export default {
 
         if (data.board) {
           this.$store.api = {
-            board: data.board
+            board: data?.board
           };
         }
       } catch (ex) {
         console.error(ex);
         return this.$router.push("/");
+      } finally {
+        this.drawFns().initCanvas();
+        this.isLoading = false;
       }
     }
   },
   async mounted() {
+    this.drawFns().initCanvas();
     if (this.isLite) {
       const currentList = this.$store.getters.currentBoards.find(
         (v) => v.id === this.$store.state.currentBoardID
@@ -287,8 +290,6 @@ export default {
     else {
       await this.fetchData();
     }
-    this.drawFns().initCanvas();
-    setInterval(() => { }, 5000);
   },
 };
 </script>

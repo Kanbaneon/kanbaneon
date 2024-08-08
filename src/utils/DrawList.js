@@ -8,7 +8,7 @@ const kanbanList = () =>
     ? store.getters.currentBoards.find(
         (v) => v.id === store.getters.currentBoardID
       )?.kanbanList
-    : store.api.board.kanbanList;
+    : store.api?.board?.kanbanList;
 
 export function initList() {
   const height = window.innerHeight;

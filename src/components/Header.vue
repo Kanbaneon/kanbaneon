@@ -326,6 +326,10 @@ h3 {
   align-items: center;
 }
 
+.ant-popover {
+  position: fixed;
+}
+
 .ant-card-body {
   width: 100%;
   display: flex;

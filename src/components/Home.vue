@@ -1,30 +1,32 @@
 <template>
   <div class="container">
-    <a-row v-if="$store.state.user.isLoggedIn && boards?.length" :gutter="16">
-      <a-col :xs="24" :md="6" v-if="smallScreen" class="col">
-        <a-card class="add-new-btn-card" @click="visible = true">
-          <a-button @click="visible = true" type="primary" size="large">
-            <PlusIcon />New Board
-          </a-button>
-        </a-card>
-      </a-col>
-      <a-col class="col" :xs="24" :md="6" v-for="board in boards" v-bind:key="board.id">
-        <a-card class="card" :title="board.name" @click="handleDirect(board.id)">
-          <KanbanImg />
-        </a-card>
-      </a-col>
-      <a-col :xs="24" :md="6" v-if="largeScreen" class="col">
-        <a-card class="add-new-btn-card" @click="visible = true">
-          <a-button @click="visible = true" class="add-new-btn" type="primary" size="large">
-            <PlusIcon />New Board
-          </a-button>
-        </a-card>
-      </a-col>
-    </a-row>
-    <div v-if="$store.state.user.isLoggedIn && !boards?.length" class="wrapper">
-      <GetStartedImg />
-      <a-button @click="visible = true" class="add-new-btn" type="primary" size="large">Get Started</a-button>
-    </div>
+    <a-spin :spinning="isLoading" tip="Loading..." size="large">
+      <a-row v-if="$store.state.user.isLoggedIn && boards?.length" :gutter="16">
+        <a-col :xs="24" :md="6" v-if="smallScreen" class="col">
+          <a-card class="add-new-btn-card" @click="visible = true">
+            <a-button @click="visible = true" type="primary" size="large">
+              <PlusIcon />New Board
+            </a-button>
+          </a-card>
+        </a-col>
+        <a-col class="col" :xs="24" :md="6" v-for="board in boards" v-bind:key="board.id">
+          <a-card class="card" :title="board.name" @click="handleDirect(board.id)">
+            <KanbanImg />
+          </a-card>
+        </a-col>
+        <a-col :xs="24" :md="6" v-if="largeScreen" class="col">
+          <a-card class="add-new-btn-card" @click="visible = true">
+            <a-button @click="visible = true" class="add-new-btn" type="primary" size="large">
+              <PlusIcon />New Board
+            </a-button>
+          </a-card>
+        </a-col>
+      </a-row>
+      <div v-if="$store.state.user.isLoggedIn && !boards?.length" class="wrapper">
+        <GetStartedImg />
+        <a-button @click="visible = true" class="add-new-btn" type="primary" size="large">Get Started</a-button>
+      </div>
+    </a-spin>
   </div>
   <a-modal title="Enter the name of new board" :visible="visible" @ok="handleAddNewBoard" @cancel="handleCancelDialog">
     <input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
@@ -76,6 +78,7 @@ export default {
   data() {
     return {
       isLite: import.meta.env.VITE_LITE_VERSION === "ON",
+      isLoading: false,
       boards: [],
       visible: false,
       mode: "template",
@@ -108,8 +111,15 @@ export default {
       if (this.isLite) {
         return this.boards = this.$store.getters.currentBoards;
       }
-      const { boards } = await getBoards();
-      this.boards = boards ?? this.$store.getters.currentBoards;
+      try {
+        this.isLoading = true;
+        const { boards } = await getBoards();
+        this.boards = boards ?? this.$store.getters.currentBoards;
+      } catch (ex) {
+        console.error(ex);
+      } finally {
+        this.isLoading = false;
+      }
     },
     handleModeChange(e) {
       this.mode = e.target.value;
