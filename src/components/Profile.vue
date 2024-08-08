@@ -40,6 +40,45 @@
                 </a-input>
             </a-form-item>
 
+            <a-form-item>
+                <template #label>
+                    <label class="label">
+                        Occupation
+                    </label>
+                </template>
+                <a-input v-model:value="state.formState.occupation" placeholder="Enter your occupation">
+                    <template #prefix>
+                        <IdcardOutlined class="site-form-item-icon" />
+                    </template>
+                </a-input>
+            </a-form-item>
+
+            <a-form-item>
+                <template #label>
+                    <label class="label">
+                        Teams
+                    </label>
+                </template>
+                <a-input v-model:value="state.formState.teams" placeholder="Enter your teams">
+                    <template #prefix>
+                        <TeamOutlined class="site-form-item-icon" />
+                    </template>
+                </a-input>
+            </a-form-item>
+
+            <a-form-item>
+                <template #label>
+                    <label class="label">
+                        Organization
+                    </label>
+                </template>
+                <a-input v-model:value="state.formState.organization" placeholder="Enter your organization">
+                    <template #prefix>
+                        <GlobalOutlined class="site-form-item-icon" />
+                    </template>
+                </a-input>
+            </a-form-item>
+
             <input type="submit" hidden />
             <a-button :disabled="state.isLoading" type="primary" size="large" block
                 @click="isLite ? saveProfile($event) : saveProfileApi($event)">
@@ -50,7 +89,7 @@
 </template>
 
 <script setup>
-import { UserOutlined, MailOutlined } from "@ant-design/icons-vue";
+import { UserOutlined, MailOutlined, IdcardOutlined, GlobalOutlined, TeamOutlined } from "@ant-design/icons-vue";
 import { onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import { editProfile, getProfile } from "../helpers/ApiHelper";
@@ -104,6 +143,7 @@ const saveProfileApi = async () => {
     justify-content: center;
     align-items: center;
     height: 80vh;
+    margin-top: 30px;
 }
 
 .ant-form {

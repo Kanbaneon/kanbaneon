@@ -1,29 +1,46 @@
 <template>
-  <a-card class="header">
-    <a-col :md="showNewList ? 14 : 18" :xl="showNewList ? 15 : 19" :xxl="showNewList ? 17 : 21">
-      <h2 class="title" @click="handleDirectHome">
-        KAN<span class="subtitle">BANEON</span>
-      </h2>
-    </a-col>
-    <a-col :xl="3" :md="4" :xxl="2" v-if="showNewList && largeScreen"></a-col>
-    <a-col :span="1" class="icon-btn-wrapper">
-      <div class="icon-btn" v-if="showNewList" shape="round"
-        @click="largeScreen ? (visibleEditBoard = true) : (popupMenu = true)">
-        <DotsIcon />
-      </div>
-    </a-col>
-    <a-col :span="1" v-if="$store.state.user.isLoggedIn">
-      <a-popover :title="$store.state.user.username" trigger="click">
-        <template #content>
-          <user-menu />
-          <p><a-button block @click="logout">Logout</a-button></p>
-        </template>
-        <div class="avatar" :size="64">
-          <UserIcon />
-        </div>
-      </a-popover>
-    </a-col>
-  </a-card>
+  <div class="header">
+    <div class="row-container">
+
+      <a-row class="header-body">
+        <a-col class="icon-container" :md="showNewList ? 14 : 18" :xl="showNewList ? 18 : 21" :xxl="showNewList ? 18 : 22">
+          <h2 class="title" @click="handleDirectHome">
+            KAN<span class="subtitle">BANEON</span>
+          </h2>
+        </a-col>
+        <a-col :xl="3" :md="5" :xxl="2" v-if="showNewList && largeScreen"></a-col>
+        <a-col :span="1" class="icon-btn-wrapper">
+          <div class="icon-btn" v-if="showNewList" shape="round"
+            @click="largeScreen ? (visibleEditBoard = true) : (popupMenu = true)">
+            <DotsIcon />
+          </div>
+        </a-col>
+        <a-col :span="1" v-if="$store.state.user.isLoggedIn">
+          <a-popover :title="$store.state.user.username" trigger="click">
+            <template #content>
+              <user-menu />
+              <p><a-button block @click="logout">Logout</a-button></p>
+            </template>
+            <div class="avatar" :size="64">
+              <UserIcon />
+            </div>
+          </a-popover>
+        </a-col>
+      </a-row>
+
+      <a-row class="header-breadcrumb">
+        <h3>
+          <a-breadcrumb>
+            <a-breadcrumb-item><a href="/">Home</a></a-breadcrumb-item>
+            <a-breadcrumb-item :key="$route.path">{{ $route.name }}</a-breadcrumb-item>
+            <a-breadcrumb-item v-if="currentBoard?.name" :key="currentBoard?.name">
+              {{ currentBoard?.name
+              }}</a-breadcrumb-item>
+          </a-breadcrumb>
+        </h3>
+      </a-row>
+    </div>
+  </div>
   <a-modal title="Enter the name of new list" :visible="visible" @ok="handleOk" @cancel="handleCancel">
     <input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
     <label class="error-label">{{ error.name }}</label>
@@ -55,15 +72,6 @@
       </a-button>
     </template>
   </a-modal>
-  <h3>
-    <a-breadcrumb>
-      <a-breadcrumb-item><a href="/">Home</a></a-breadcrumb-item>
-      <a-breadcrumb-item :key="$route.path">{{ $route.name }}</a-breadcrumb-item>
-      <a-breadcrumb-item v-if="currentBoard?.name" :key="currentBoard?.name">
-        {{ currentBoard?.name
-        }}</a-breadcrumb-item>
-    </a-breadcrumb>
-  </h3>
 </template>
 
 <script>
@@ -243,7 +251,10 @@ h3 {
   font-size: 32px;
   font-weight: bold;
   color: #42b883;
+
   cursor: pointer;
+  margin-top: 16px;
+  margin-left: 16px;
 }
 
 .avatar {
@@ -278,10 +289,47 @@ h3 {
 }
 </style>
 
+<style>
+.container {
+  margin-top: 140px;
+}
+</style>
+
 <style scoped>
-.header .ant-card-body {
+.header {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 10;
+  background: transparent;
+}
+
+.header-body {
+  background: white;
+  padding: 20px;
+  border-radius: 1px solid whitesmoke;
+}
+
+.header-breadcrumb {
+  background: #42b883;
+  padding: 4px;
+}
+
+.row-container {
   width: 100%;
   display: flex;
+  flex-direction: column;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+}
+
+.ant-card-body {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .ant-breadcrumb,

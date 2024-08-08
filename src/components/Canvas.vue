@@ -314,9 +314,8 @@ export default {
 }
 
 .canvas-wrapper {
+  margin-top: 140px;
   width: 100%;
-  max-height: 90vh;
-  overflow-x: scroll;
 }
 
 .edit-card-textarea {
