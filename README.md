@@ -5,6 +5,10 @@
 <p>Version 1.0.0</p>
 <p>by m3yevn</p>
 
+Deployed on Netlify
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3f09507e-0b31-4009-8d82-5ef7ce9a6aa6/deploy-status)](https://app.netlify.com/sites/kanbaneon/deploys)
+
 <hr/>
 
  - Easy and Fast Drag And Drop Kanban Card
