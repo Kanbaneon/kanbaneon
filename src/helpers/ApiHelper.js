@@ -2,10 +2,23 @@ const apiUrl = import.meta.env.VITE_KANBANEON_API_URL;
 import { message } from "ant-design-vue";
 
 const token = () => localStorage.getItem("token");
+const imgBBurl = import.meta.env.VITE_IMGBB_API_URL;
+const imgBBkey = import.meta.env.VITE_IMGBB_API_KEY;
 
 export async function login(username, password) {
   try {
     const response = await post("/login", { username, password });
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function uploadPhoto(formData) {
+  try {
+    const response = await postImgBB(formData);
     if (response.success) {
       return response;
     }
@@ -313,6 +326,20 @@ const post = async (endpoint, body, token) => {
         })
       : {},
     body: JSON.stringify(body),
+  });
+
+  const json = await response.json();
+  if (response.status !== 200) {
+    return message.error(json.message);
+  }
+
+  return json;
+};
+
+const postImgBB = async (body) => {
+  const response = await fetch(`${imgBBurl}?key=${imgBBkey}`, {
+    method: "POST",
+    body,
   });
 
   const json = await response.json();

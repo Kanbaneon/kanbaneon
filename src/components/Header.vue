@@ -257,17 +257,6 @@ h3 {
   margin-left: 16px;
 }
 
-.avatar {
-  background: #42b883;
-  border-radius: 50%;
-  height: 60px;
-  width: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
 .subtitle {
   color: #35495e;
 }
