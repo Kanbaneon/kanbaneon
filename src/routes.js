@@ -24,6 +24,7 @@ const loginGuard = isLite
               username: result.reauth.username,
               isLoggedIn: true,
             };
+            store.commit("setProfile");
           } else {
             store.commit("setUser", {
               isLoggedIn: false,
@@ -99,6 +100,7 @@ const sessionGuard = isLite
             username: result.reauth.username,
             isLoggedIn: true,
           };
+          store.commit("setProfile");
           return true;
         } else {
           store.commit("setUser", {

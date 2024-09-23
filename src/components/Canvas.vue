@@ -5,7 +5,7 @@
     </div>
   </a-spin>
   <a-modal title="Enter the message of new item" :visible="visible" @ok="handleOk" @cancel="handleCancel">
-    <textarea rows="8" class="ant-input" placeholder="Type here..." v-model="message" />
+    <a-textarea rows="8" class="ant-input" placeholder="Type here..." v-model="message" />
     <template v-slot:footer>
       <a-button key="back" @click="handleCancel"> Cancel </a-button>
       <a-button key="submit" type="primary" @click="handleOk">
@@ -15,7 +15,7 @@
   </a-modal>
   <a-modal :title="listDialog.title" :visible="listDialog.visible" @ok="handleOkListDialog"
     @cancel="handleCancelListDialog">
-    <input class="ant-input" placeholder="Name" v-model="listDialog.editingList.name" @change="handleNameChange" />
+    <a-input class="ant-input" placeholder="Name" v-model="listDialog.editingList.name" @change="handleNameChange" />
     <label class="error-label">{{ listDialog.error.name }}</label>
     <template v-slot:footer>
       <a-button v-if="!listDialog.creating" class="btn-danger" type="danger" @click="handleDeleteList">Delete</a-button>
@@ -27,7 +27,7 @@
   </a-modal>
   <a-modal :title="cardDialog.title" :visible="cardDialog.visible" @ok="handleOkCardDialog"
     @cancel="handleCancelCardDialog">
-    <textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..."
+    <a-textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..."
       v-model="cardDialog.editingCard.text" />
     <template v-slot:footer>
       <a-button class="btn-danger" type="danger" @click="handleDeleteCard">Delete</a-button>

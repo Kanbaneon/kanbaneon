@@ -3,7 +3,8 @@
     <div class="row-container">
 
       <a-row class="header-body">
-        <a-col class="icon-container" :md="showNewList ? 14 : 18" :xl="showNewList ? 18 : 21" :xxl="showNewList ? 18 : 22">
+        <a-col class="icon-container" :md="showNewList ? 14 : 18" :xl="showNewList ? 18 : 21"
+          :xxl="showNewList ? 18 : 22">
           <h2 class="title" @click="handleDirectHome">
             KAN<span class="subtitle">BANEON</span>
           </h2>
@@ -22,7 +23,9 @@
               <p><a-button block @click="logout">Logout</a-button></p>
             </template>
             <div class="avatar" :size="64">
-              <UserIcon />
+              <img v-if="$store.state.profile.details.profilePicture.link"
+                :src="$store.state.profile.details.profilePicture.link" />
+              <UserIcon v-else />
             </div>
           </a-popover>
         </a-col>
@@ -42,7 +45,7 @@
     </div>
   </div>
   <a-modal title="Enter the name of new list" :visible="visible" @ok="handleOk" @cancel="handleCancel">
-    <input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
+    <a-input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
     <label class="error-label">{{ error.name }}</label>
     <template v-slot:footer>
       <a-button key="back" @click="handleCancel"> Cancel </a-button>
@@ -52,7 +55,7 @@
     </template>
   </a-modal>
   <a-modal title="Edit board" :visible="visibleEditBoard" @ok="handleOkEditBoard" @cancel="handleCancelEditBoard">
-    <input class="ant-input" placeholder="Name" v-model="boardDialog.editingBoard.name"
+    <a-input class="ant-input" placeholder="Name" v-model="boardDialog.editingBoard.name"
       @change="handleBoardNameChange" />
     <label class="error-label">{{ boardDialog.error.name }}</label>
     <template v-slot:footer>

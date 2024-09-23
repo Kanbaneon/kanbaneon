@@ -88,9 +88,8 @@ export default {
           this.$store.commit("setUser", {
             username: this.username,
             isLoggedIn: true,
-            id: user.id
+            ...user
           });
-
           localStorage.setItem("token", user.token);
           this.$router.push("/");
         }

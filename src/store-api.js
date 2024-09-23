@@ -10,9 +10,19 @@ import {
   deleteCard,
   swapList,
   swapCardExternal,
+  getProfile,
 } from "./helpers/ApiHelper";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
+
+export const setProfile = async (state) => {
+  try {
+    const profileData = await getProfile();
+    state.profile = profileData.user;
+  } catch (ex) {
+    console.error(ex);
+  }
+};
 
 export const addKanbanBoard = isLite
   ? function (state, board) {

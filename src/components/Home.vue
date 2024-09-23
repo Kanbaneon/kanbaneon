@@ -29,7 +29,7 @@
     </a-spin>
   </div>
   <a-modal title="Enter the name of new board" :visible="visible" @ok="handleAddNewBoard" @cancel="handleCancelDialog">
-    <input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
+    <a-input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
     <label class="error-label">{{ error.name }}</label>
 
     <a-radio-group class="radio-wrapper" v-model="mode" default-value="template" @change="handleModeChange">

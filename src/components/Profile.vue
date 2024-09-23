@@ -120,7 +120,9 @@
                         </template>
                         <div role="button">
                             <div class="avatar">
-                                <p v-if="state.isLoadingProfile">Uploading...</p>
+                                <p class="avatar-loading" v-if="state.isLoadingProfile">Uploading...</p>
+                                <img v-else-if="state.formState.details.profilePicture.link"
+                                    :src="state.formState.details.profilePicture.link" />
                                 <UserIcon v-else />
                             </div>
                             <div class="edit-button-wrapper">
@@ -154,14 +156,15 @@ const state = reactive({
     isLoading: false,
     isLoadingProfile: false,
     formState: {
-        username: $store?.state?.user?.username,
-        name: $store?.state?.user?.name,
-        email: $store?.state?.user?.email,
+        username: $store?.state?.profile?.username,
+        name: $store?.state?.profile?.name,
+        email: $store?.state?.profile?.email,
         details: {
-            occupation: $store?.state?.user?.details?.occupation,
-            teams: $store?.state?.user?.details?.teams,
-            organization: $store?.state?.user?.details?.organization,
-            location: $store?.state?.user?.details?.location
+            occupation: $store?.state?.profile?.details?.occupation,
+            teams: $store?.state?.profile?.details?.teams,
+            organization: $store?.state?.profile?.details?.organization,
+            location: $store?.state?.profile?.details?.location,
+            profilePicture: $store?.state?.profile?.details?.profilePicture,
         }
     },
     isLoading: false
@@ -195,11 +198,14 @@ const handleFileChange = async () => {
         popoverRef.value = false;
         const form = new FormData();
         const file = fileRef.value.files[0];
-        const fileName = `${$store?.state?.user?.username}-profile-picture-${v4()}`;
+        const fileName = `${$store?.state?.profile?.username}-profile-picture-${v4()}`;
         form.append("image", file);
         form.set("name", fileName);
         const response = await uploadPhoto(form);
-        await saveProfileApi({ profilePicture: response.data });
+        if (response.success) {
+            $store.commit("setProfile");
+            state.formState.details.profilePicture = response.data;
+        }
     } catch (ex) {
         console.error(ex);
     } finally {
@@ -213,10 +219,7 @@ const saveProfileApi = async (injectionData) => {
         const response = await editProfile({
             name: state.formState.name, email: state.formState.email,
             details: {
-                occupation: state.formState.occupation,
-                teams: state.formState.teams,
-                organization: state.formState.organization,
-                location: state.formState.location,
+                ...state.formState.details,
                 ...injectionData
             }
         });
@@ -265,7 +268,7 @@ const saveProfileApi = async (injectionData) => {
     margin-top: 10px;
     padding: 24px;
     width: 400px;
-    margin-left: -24px;
+    margin-left: -48px;
 }
 
 .edit-button-wrapper {
@@ -284,8 +287,13 @@ const saveProfileApi = async (injectionData) => {
 }
 
 .avatar {
-    width: 148px;
-    height: 148px
+    width: 200px;
+    height: 200px
+}
+
+.avatar-loading {
+    color: white;
+    font-weight: 600;
 }
 
 input[type="file"] {

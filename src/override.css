@@ -7,8 +7,16 @@
     border-radius: 50%;
     height: 60px;
     width: 60px;
+    border: solid 3px #42b883;
+
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-  }
+    overflow: hidden;
+}
+
+.avatar img {
+    height: 100%;
+    width: auto;
+}

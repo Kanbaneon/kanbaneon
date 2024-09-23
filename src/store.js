@@ -13,6 +13,7 @@ import {
   swapKanbanList,
   swapKanbanCardExternal,
   swapKanbanCardInternal,
+  setProfile,
 } from "./store-api";
 
 const initialState = {
@@ -22,6 +23,7 @@ const initialState = {
     isLoggedIn: false,
     username: "",
   },
+  profile: {},
 };
 
 export async function getExistingUser(username) {
@@ -55,6 +57,9 @@ export const store = createStore({
     user(state) {
       return JSON.parse(JSON.stringify(state.user));
     },
+    profile(state) {
+      return JSON.parse(JSON.stringify(state.profile));
+    },
     currentBoards(state) {
       const userId = state.user.id ?? "";
       return JSON.parse(JSON.stringify(state.kanbanBoards?.[userId] ?? []));
@@ -73,6 +78,7 @@ export const store = createStore({
     swapKanbanList,
     swapKanbanCardExternal,
     swapKanbanCardInternal,
+    setProfile,
     async setKanbanBoards(state, boards) {
       state.kanbanBoards = boards;
       await browserDB.put(
