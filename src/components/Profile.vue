@@ -100,10 +100,10 @@
                         </a-form-item>
 
                         <input type="submit" hidden />
-                        <a-button :disabled="state.isLoading" type="primary" size="large" block
+                        <a-button :disabled="state.isLoading || state.isLoadingProfile" type="primary" size="large" block
                             @click="isLite ? saveProfile($event) : saveProfileApi($event)">
                             <a-spin v-if="state.isLoading" />
-                            {{ state.isLoading ? "Loading..." : "Save Profile" }}</a-button>
+                            {{ state.isLoading || state.isLoadingProfile ? "Loading..." : "Save Profile" }}</a-button>
                     </a-form>
                 </a-col>
                 <a-col :span="4" class="avatar-form">

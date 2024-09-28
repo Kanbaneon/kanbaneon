@@ -22,17 +22,17 @@
           </a-card>
         </a-col>
       </a-row>
-      <div v-if="$store.state.user.isLoggedIn && !boards?.length" class="wrapper">
+      <div v-if="$store.state.user.isLoggedIn && !boards?.length && !isLoading" class="wrapper">
         <GetStartedImg />
         <a-button @click="visible = true" class="add-new-btn" type="primary" size="large">Get Started</a-button>
       </div>
     </a-spin>
   </div>
   <a-modal title="Enter the name of new board" :visible="visible" @ok="handleAddNewBoard" @cancel="handleCancelDialog">
-    <a-input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
+    <a-input class="ant-input" placeholder="Name" v-model:value="name" @change="handleNameChange" />
     <label class="error-label">{{ error.name }}</label>
 
-    <a-radio-group class="radio-wrapper" v-model="mode" default-value="template" @change="handleModeChange">
+    <a-radio-group class="radio-wrapper" v-model:value="mode" default-value="template" @change="handleModeChange">
       <a-radio class="radio-wrapper" value="empty">
         Create empty board
       </a-radio>

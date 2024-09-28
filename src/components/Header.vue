@@ -23,8 +23,8 @@
               <p><a-button block @click="logout">Logout</a-button></p>
             </template>
             <div class="avatar" :size="64">
-              <img v-if="$store.state.profile.details.profilePicture.link"
-                :src="$store.state.profile.details.profilePicture.link" />
+              <img v-if="!isLite && $store.state.profile.details?.profilePicture?.link"
+                :src="$store.state.profile.details?.profilePicture?.link" />
               <UserIcon v-else />
             </div>
           </a-popover>
@@ -44,18 +44,8 @@
       </a-row>
     </div>
   </div>
-  <a-modal title="Enter the name of new list" :visible="visible" @ok="handleOk" @cancel="handleCancel">
-    <a-input class="ant-input" placeholder="Name" v-model="name" @change="handleNameChange" />
-    <label class="error-label">{{ error.name }}</label>
-    <template v-slot:footer>
-      <a-button key="back" @click="handleCancel"> Cancel </a-button>
-      <a-button key="submit" type="primary" @click="handleOk">
-        Confirm
-      </a-button>
-    </template>
-  </a-modal>
   <a-modal title="Edit board" :visible="visibleEditBoard" @ok="handleOkEditBoard" @cancel="handleCancelEditBoard">
-    <a-input class="ant-input" placeholder="Name" v-model="boardDialog.editingBoard.name"
+    <a-input class="ant-input" placeholder="Name" :value="boardDialog.editingBoard.name"
       @change="handleBoardNameChange" />
     <label class="error-label">{{ boardDialog.error.name }}</label>
     <template v-slot:footer>
@@ -125,12 +115,6 @@ export default {
     this.handleCheckRoute();
   },
   methods: {
-    openModalSave() {
-      this.visibleSave = true;
-    },
-    openModal() {
-      this.visible = true;
-    },
     async logout() {
       this.$store.commit("setUser", {
         isLoggedIn: false,

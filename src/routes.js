@@ -148,8 +148,15 @@ export const routes = [
   {
     path: "/profile",
     name: "Your Profile",
-    component: () => import("./components/Profile.vue"),
-    beforeEnter: sessionGuard,
+    component: defineAsyncComponent({
+      loader: () => import("./components/Profile.vue"),
+    }),
+    beforeEnter: () => {
+      if (isLite) {
+        return { path: "/" };
+      }
+      return sessionGuard();
+    },
     props: true,
   },
   {

@@ -11,14 +11,15 @@ import { useRouter } from 'vue-router';
 
 const selectedKeys = ref([]);
 const openKeys = ref([]);
+const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 
 const items = ref([
-    {
+    !isLite ? {
         key: 1,
         icon: () => h(UserOutlined),
         label: 'Your profile',
         route: '/profile'
-    }
+    } : null
 ]);
 
 const router = useRouter();
