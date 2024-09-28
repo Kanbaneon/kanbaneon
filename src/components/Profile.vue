@@ -121,8 +121,8 @@
                         <div role="button">
                             <div class="avatar">
                                 <p class="avatar-loading" v-if="state.isLoadingProfile">Uploading...</p>
-                                <img v-else-if="state.formState.details.profilePicture.link"
-                                    :src="state.formState.details.profilePicture.link" />
+                                <img v-else-if="state.formState.details?.profilePicture?.link"
+                                    :src="state.formState.details?.profilePicture?.link" />
                                 <UserIcon v-else />
                             </div>
                             <div class="edit-button-wrapper">

@@ -116,6 +116,13 @@ const sessionGuard = isLite
       }
     };
 
+const forgotGuard = (route) => {
+  if (!route.query?.type) {
+    return { path: "/forgot", query: { type: "password" } };
+  }
+  return true;
+};
+
 export const routes = [
   {
     path: "/",
@@ -158,6 +165,15 @@ export const routes = [
       return sessionGuard();
     },
     props: true,
+  },
+  {
+    path: "/terms-and-conditions",
+    component: () => import("./components/TermsAndConditions.vue"),
+  },
+  {
+    path: "/forgot",
+    beforeEnter: forgotGuard,
+    component: () => import("./components/Forgot.vue"),
   },
   {
     path: "/:pathMatch(.*)*",

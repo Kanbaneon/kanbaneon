@@ -1,19 +1,19 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="isLite ? login($event) : loginApi($event)">
+    <form @submit.prevent="isLite ? login($event) : loginApi($event)" autocomplete="off">
       <a-card class="card">
         <h2 class="title">
           KAN<span class="subtitle">BANEON</span>
           <span class="version" v-if="isLite"> Lite</span>
         </h2>
         <div class="input-wrapper">
-          <a-input v-model:value="username" placeholder="Enter your username or email">
+          <a-input v-model:value="username" placeholder="Enter your username or email" autocomplete="new-username">
             <template #prefix>
               <UserOutlined class="site-form-item-icon" />
             </template>
           </a-input>
           <label class="error-label">{{ error.username }}&nbsp;</label>
-          <a-input-password v-if="!isLite" v-model:value="password" placeholder="Enter your password" type="password">
+          <a-input-password v-if="!isLite" v-model:value="password" placeholder="Enter your password" type="password" autocomplete="new-password">
             <template #prefix>
               <LockOutlined class="site-form-item-icon" />
             </template>
@@ -24,6 +24,7 @@
           </a-input-password>
           <label v-if="!isLite" class="error-label">{{ error.password }}&nbsp;</label>
         </div>
+        <p class="forgot-link"><router-link to="forgot?type=password">Forgot your username or password?</router-link></p>
         <input type="submit" hidden />
         <a-button :disabled="isLoading" type="primary" size="large" block
           @click="isLite ? login($event) : loginApi($event)">
@@ -148,6 +149,14 @@ export default {
 
 .form-footer {
   padding-top: 20px;
+}
+
+a {
+  text-decoration: underline;
+}
+
+.forgot-link {
+  margin-left: 100px;
 }
 </style>
 
