@@ -25,7 +25,7 @@
         <div class="type-component" v-if="state.type === 'username' && !state.isSuccess">
             <h1>Recover your account</h1>
             <h2>Enter your email to help us find you.<br />
-                We’ll send you a link to recover your account.</h2>
+                We’ll send your username.</h2>
             <a-form ref="formRef" :model="formState[state.type]" @finish="sendEmail" autocomplete="new-form">
                 <a-form-item :name="['email']"
                     :rules="[{ required: true, message: 'Email is required.' }, { type: 'email', message: 'This is not a valid email.' }]">
@@ -47,7 +47,8 @@
         <div class="type-component" v-if="state.isSuccess">
             <EmailSentImg />
             <h1>Check your email...</h1>
-            <h2> There should be a link to recover your account.</h2>
+            <h2 v-if="state.type === 'password'">There should be a link to recover your account.</h2>
+            <h2 v-else>We have sent your username.</h2>
             <a-form ref="formRef">
                 <a-button type="primary" size="large" block @click="backToLogin()">
                     <a-spin v-if="state.isLoading" />
@@ -58,7 +59,7 @@
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { sendRecoveryEmail } from '../helpers/ApiHelper';
@@ -71,6 +72,7 @@ const state = reactive({
     isSuccess: false,
     isLoading: false
 })
+const formRef = ref("formRef");
 
 watch(() => route.query?.type, (newValue) => {
     state.type = newValue;
@@ -92,6 +94,7 @@ const backToLogin = () => {
 const sendEmail = async (e) => {
     state.isLoading = true;
     try {
+        await formRef.value.validateFields();
         const response = await sendRecoveryEmail({
             type: state.type,
             ...formState[state.type]
