@@ -2,8 +2,6 @@ const apiUrl = import.meta.env.VITE_KANBANEON_API_URL;
 import { message } from "ant-design-vue";
 
 const token = () => localStorage.getItem("token");
-const imgUploadurl = import.meta.env.VITE_IMG_API_URL;
-const imgUploadkey = import.meta.env.VITE_IMG_API_KEY;
 
 export async function login(username, password) {
   try {
@@ -49,6 +47,41 @@ export async function reauth(token) {
   }
 }
 
+export async function sendRecoveryEmail(payload) {
+  try {
+    const response = await post("/recovery", payload);
+    if (response.success) {
+      message.success("Recovery email is successfully sent.");
+      return response;
+    }
+  } catch (ex) {
+    console.info(ex.message);
+  }
+}
+
+export async function editPassword(payload) {
+  try {
+    const response = await post(`/recovery/${token}/password`, payload);
+    if (response.success) {
+      message.success("Password is successfully updated.");
+      return response;
+    }
+  } catch (ex) {
+    console.info(ex.message);
+  }
+}
+
+export async function validateToken(token) {
+  try {
+    const response = await post(`/recovery/${token}`);
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    console.info(ex.message);
+  }
+}
+
 export async function getProfile() {
   try {
     const response = await get(`/profile`);
@@ -64,6 +97,7 @@ export async function editProfile(profile) {
   try {
     const response = await put(`/profile`, profile);
     if (response.success) {
+      message.success("Profile is successfully saved.");
       return response;
     }
   } catch (ex) {
@@ -322,7 +356,7 @@ const post = async (endpoint, body, token) => {
     method: "POST",
     headers: token
       ? new Headers({
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         })
       : {},
     body: body instanceof FormData ? body : JSON.stringify(body),

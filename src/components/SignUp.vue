@@ -8,7 +8,7 @@
         </h2>
         <div class="input-wrapper">
           <a-form-item :name="['username']"
-            :rules="[{ required: true, message: 'Username is required.' }, { validator: validateUsername, message: 'Username must be 5-10 characters long and contain only letters, numbers, or underscores (no special characters or dashes).'}]">
+            :rules="[{ required: true, message: 'Username is required.' }, { validator: validateUsername, message: 'Username must be 5-10 characters long and contain only lowercase letters, numbers, or underscores (no special characters or dashes).'}]">
             <a-input v-model:value="formState.username" placeholder="Enter your username" autocomplete="new-username">
               <template #prefix>
                 <UserOutlined class="site-form-item-icon" />
@@ -24,7 +24,7 @@
             </a-input>
           </a-form-item>
           <a-form-item :name="['password']"
-            :rules="[{ required: true, message: 'Password is required.' }, { validator: validatePassword, message: 'Password must have 8-16 characters long and include at least a uppercase letter, a lowercase letter, a number, and a special character.' }]">
+            :rules="[{ required: true, message: 'Password is required.' }, { validator: validatePassword, message: 'Password must have 8-24 characters long and include at least a uppercase letter, a lowercase letter, a number, and a special character.' }]">
             <a-input-password v-if="!isLite" v-model:value="formState.password" placeholder="Enter your password"
               type="password" autocomplete="new-password">
               <template #prefix>
@@ -80,7 +80,7 @@ export default {
       if (!value) {
         return Promise.resolve();
       }
-      const usernameStandard = /^[A-Za-z0-9_]{5,10}$/
+      const usernameStandard = /^[a-z0-9_]{5,10}$/
       if (usernameStandard.test(value)) {
         return Promise.resolve();
       }
@@ -90,7 +90,7 @@ export default {
       if (!value) {
         return Promise.resolve();
       }
-      const passwordStandard = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,16}$/
+      const passwordStandard = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,24}$/
       if (passwordStandard.test(value)) {
         return Promise.resolve();
       }

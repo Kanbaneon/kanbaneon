@@ -176,6 +176,10 @@ export const routes = [
     component: () => import("./components/Forgot.vue"),
   },
   {
+    path: "/recovery",
+    component: () => import("./components/Recovery.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     component: () => import("./components/NotFound.vue"),
   },
