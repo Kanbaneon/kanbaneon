@@ -6,21 +6,39 @@
 
 <script setup>
 import { h, ref } from 'vue';
-import { UserOutlined } from '@ant-design/icons-vue';
+import { UserOutlined, BorderInnerOutlined, TeamOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
 
 const selectedKeys = ref([]);
 const openKeys = ref([]);
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 
-const items = ref([
-    !isLite ? {
+const items = ref(!isLite ? [
+    {
         key: 1,
         icon: () => h(UserOutlined),
         label: 'Your profile',
         route: '/profile'
-    } : null
-]);
+    },
+    {
+        key: 2,
+        icon: () => h(BorderInnerOutlined),
+        label: 'Your boards',
+        route: '/boards'
+    },
+    {
+        key: 3,
+        icon: () => h(TeamOutlined),
+        label: 'Your teams',
+        route: '/teams'
+    },
+    {
+        key: 4,
+        icon: () => h(SettingOutlined),
+        label: 'Settings',
+        route: '/settings'
+    },
+] : null);
 
 const router = useRouter();
 

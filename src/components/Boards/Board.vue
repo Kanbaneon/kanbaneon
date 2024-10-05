@@ -48,20 +48,20 @@ import {
   deleteCardOnCanvas,
   editListOnCanvas,
   deleteListOnCanvas,
-} from "../utils/DrawCanvas";
-import { initList } from "../utils/DrawList";
-import { initListItem } from "../utils/DrawListItem";
-import getAddButton from "../utils/DrawAddButton";
-import getAddText from "../utils/DrawAddText";
-import getCard from "../utils/DrawCard";
-import getTile from "../utils/DrawTile";
-import getText from "../utils/DrawText";
+} from "../../utils/DrawCanvas";
+import { initList } from "../../utils/DrawList";
+import { initListItem } from "../../utils/DrawListItem";
+import getAddButton from "../../utils/DrawAddButton";
+import getAddText from "../../utils/DrawAddText";
+import getCard from "../../utils/DrawCard";
+import getTile from "../../utils/DrawTile";
+import getText from "../../utils/DrawText";
 import {
   addList, addCard,
   editList, editCard,
   deleteList, deleteCard,
   getBoard
-} from '../helpers/ApiHelper';
+} from '../../helpers/ApiHelper';
 import * as uuid from "uuid";
 
 export default {

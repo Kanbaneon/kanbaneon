@@ -62,8 +62,8 @@
 import { reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons-vue';
-import { sendRecoveryEmail } from '../helpers/ApiHelper';
-import EmailSentImg from "../assets/EmailSent.vue";
+import { sendRecoveryEmail } from '../../helpers/ApiHelper';
+import EmailSentImg from "../../assets/EmailSent.vue";
 
 const route = useRoute();
 const router = useRouter();

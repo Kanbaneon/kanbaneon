@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import { message } from "ant-design-vue";
-import { signUp } from "../helpers/ApiHelper";
+import { signUp } from "../../helpers/ApiHelper";
 import { EyeTwoTone, EyeInvisibleOutlined, UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons-vue';
 
 export default {

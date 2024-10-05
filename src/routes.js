@@ -6,46 +6,6 @@ import { reauth } from "./helpers/ApiHelper";
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
 const getToken = () => (isLite ? "LITE" : localStorage.getItem("token"));
 
-const loginGuard = isLite
-  ? () => {
-      if (!store.state.user.isLoggedIn) {
-        return { path: "/login" };
-      }
-      return true;
-    }
-  : async () => {
-      const token = getToken();
-      if (token) {
-        try {
-          const result = await reauth(token);
-
-          if (result?.success) {
-            store.state.user = {
-              username: result.reauth.username,
-              isLoggedIn: true,
-            };
-            store.commit("setProfile");
-          } else {
-            store.commit("setUser", {
-              isLoggedIn: false,
-              username: "",
-              id: undefined,
-            });
-            localStorage.removeItem("token");
-            return { path: "/login" };
-          }
-        } catch (ex) {
-          console.error(ex);
-          return { path: "/login" };
-        }
-      }
-
-      if (!store.state.user.isLoggedIn) {
-        return { path: "/login" };
-      }
-      return true;
-    };
-
 const logoutGuard = isLite
   ? () => {
       if (store.state.user.isLoggedIn) {
@@ -123,32 +83,22 @@ const forgotGuard = (route) => {
   return true;
 };
 
-export const routes = [
+const nonLiteRoutes = [
   {
-    path: "/",
-    component: () => import("./components/Home.vue"),
-    beforeEnter: loginGuard,
-    props: true,
-  },
-  {
-    path: "/login",
-    component: () => import("./components/Login.vue"),
-    beforeEnter: logoutGuard,
-    props: true,
-  },
-  {
-    path: "/signup",
-    component: () => import("./components/SignUp.vue"),
-    beforeEnter: logoutGuard,
-    props: true,
-  },
-  { path: "/board", redirect: "/", name: "Your boards" },
-  {
-    path: "/board/:id",
+    path: "/teams",
+    name: "Your teams",
     component: defineAsyncComponent({
-      loader: () => import("./components/Canvas.vue"),
+      loader: () => import("./components/Teams/Teams.vue"),
     }),
-    name: "Your boards",
+    beforeEnter: sessionGuard,
+    props: true,
+  },
+  {
+    path: "/teams/:id",
+    component: defineAsyncComponent({
+      loader: () => import("./components/Teams/Team.vue"),
+    }),
+    name: "Your teams ",
     beforeEnter: sessionGuard,
     props: true,
   },
@@ -156,32 +106,74 @@ export const routes = [
     path: "/profile",
     name: "Your Profile",
     component: defineAsyncComponent({
-      loader: () => import("./components/Profile.vue"),
+      loader: () => import("./components/Users/Profile.vue"),
     }),
-    beforeEnter: () => {
-      if (isLite) {
-        return { path: "/" };
-      }
-      return sessionGuard();
-    },
+    beforeEnter: sessionGuard,
+    props: true,
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: defineAsyncComponent({
+      loader: () => import("./components/Settings/index.vue"),
+    }),
+    beforeEnter: sessionGuard,
     props: true,
   },
   {
     path: "/terms-and-conditions",
-    component: () => import("./components/TermsAndConditions.vue"),
+    component: () => import("./components/Views/TermsAndConditions.vue"),
   },
   {
     path: "/forgot",
     beforeEnter: forgotGuard,
-    component: () => import("./components/Forgot.vue"),
+    component: () => import("./components/Auth/Forgot.vue"),
   },
   {
     path: "/recovery",
-    component: () => import("./components/Recovery.vue"),
+    component: () => import("./components/Auth/Recovery.vue"),
+  },
+];
+
+export const routes = [
+  {
+    path: "/",
+    beforeEnter: sessionGuard,
+    props: true,
+    redirect: "/boards",
   },
   {
+    path: "/login",
+    component: () => import("./components/Auth/Login.vue"),
+    beforeEnter: logoutGuard,
+    props: true,
+  },
+  {
+    path: "/signup",
+    component: () => import("./components/Auth/SignUp.vue"),
+    beforeEnter: logoutGuard,
+    props: true,
+  },
+  {
+    path: "/boards",
+    name: "Your boards",
+    component: () => import("./components/Boards/Boards.vue"),
+    beforeEnter: sessionGuard,
+    props: true,
+  },
+  {
+    path: "/boards/:id",
+    component: defineAsyncComponent({
+      loader: () => import("./components/Boards/Board.vue"),
+    }),
+    name: "Your boards ",
+    beforeEnter: sessionGuard,
+    props: true,
+  },
+  ...(!isLite ? nonLiteRoutes : []),
+  {
     path: "/:pathMatch(.*)*",
-    component: () => import("./components/NotFound.vue"),
+    component: () => import("./components/Views/NotFound.vue"),
   },
 ];
 

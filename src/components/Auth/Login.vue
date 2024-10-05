@@ -43,9 +43,9 @@
 
 <script lang="ts">
 import { v4 } from "uuid";
-import { INDEXED_DB, browserDB } from "../helpers/IndexedDbHelper";
-import { getExistingUser } from "../store";
-import { login } from "../helpers/ApiHelper";
+import { INDEXED_DB, browserDB } from "../../helpers/IndexedDbHelper";
+import { getExistingUser } from "../../store";
+import { login } from "../../helpers/ApiHelper";
 import { EyeTwoTone, EyeInvisibleOutlined, UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 
 export default {

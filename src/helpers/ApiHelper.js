@@ -59,6 +59,18 @@ export async function sendRecoveryEmail(payload) {
   }
 }
 
+export async function editUsername(payload) {
+  try {
+    const response = await put(`/profile/username`, payload);
+    if (response.success) {
+      message.success("Username is successfully updated.");
+      return response;
+    }
+  } catch (ex) {
+    console.info(ex.message);
+  }
+}
+
 export async function editPassword(payload) {
   try {
     const response = await post(`/recovery/${token}/password`, payload);

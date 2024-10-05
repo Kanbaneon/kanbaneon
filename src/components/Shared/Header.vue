@@ -19,6 +19,7 @@
         <a-col :span="1" v-if="$store.state.user.isLoggedIn">
           <a-popover :title="$store.state.user.username" trigger="click">
             <template #content>
+              <span class="name">{{ $store.state.profile?.name }}</span>
               <user-menu />
               <p><a-button block @click="logout">Logout</a-button></p>
             </template>
@@ -68,12 +69,12 @@
 </template>
 
 <script>
-import PlusIcon from "../assets/PlusIcon.vue";
-import DotsIcon from "../assets/DotsIcon.vue";
-import UserIcon from "../assets/UserIcon.vue";
+import PlusIcon from "../../assets/PlusIcon.vue";
+import DotsIcon from "../../assets/DotsIcon.vue";
+import UserIcon from "../../assets/UserIcon.vue";
 import UserMenu from "./UserMenu.vue";
-import { addListOnCanvas } from "../utils/DrawCanvas";
-import { deleteBoard, getBoard } from "../helpers/ApiHelper";
+import { addListOnCanvas } from "../../utils/DrawCanvas";
+import { deleteBoard, getBoard } from "../../helpers/ApiHelper";
 
 export default {
   data() {
@@ -81,7 +82,7 @@ export default {
       isLite: import.meta.env.VITE_LITE_VERSION === "ON",
       smallScreen: window.matchMedia("(max-width:456px)").matches,
       largeScreen: window.matchMedia("(min-width:456px)").matches,
-      showNewList: this.$route.matched?.[0]?.path === "/board/:id",
+      showNewList: this.$route.matched?.[0]?.path === "/boards/:id",
       visible: false,
       visibleSave: false,
       visibleEditBoard: false,
@@ -114,6 +115,12 @@ export default {
   mounted() {
     this.handleCheckRoute();
   },
+  computed: {
+    parentRoute() {
+      const parent = this.$route.matched[this.$route.matched.length - 2];
+      return parent;
+    }
+  },
   methods: {
     async logout() {
       this.$store.commit("setUser", {
@@ -129,7 +136,6 @@ export default {
       this.$router.push("/");
     },
     handleDirectHome() {
-      this.currentBoard = {};
       this.$router.push("/");
     },
     async handleOkEditBoard() {
@@ -183,7 +189,7 @@ export default {
       this.visible = false;
     },
     async handleCheckRoute() {
-      if (this.$route.matched?.[0]?.path === "/board/:id") {
+      if (this.$route.matched?.[0]?.path === "/boards/:id") {
         this.showNewList = true;
         this.$store.commit("setCurrentBoardID", this.$route?.params?.id);
         let result;
@@ -199,6 +205,7 @@ export default {
         };
       } else {
         this.showNewList = false;
+        this.currentBoard = {};
         this.$store.commit("setCurrentBoardID", null);
       }
     },
@@ -267,7 +274,7 @@ h3 {
 
 <style>
 .container {
-  margin-top: 140px;
+  margin-top: 150px;
 }
 </style>
 
@@ -323,5 +330,9 @@ h3 {
   color: rgb(13, 68, 63);
   font-size: 20px;
   transition: color 0.3s;
+}
+
+.name {
+  color: grey;
 }
 </style>

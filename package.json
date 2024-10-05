@@ -11,7 +11,7 @@
     "konva": "^8.1.1",
     "uuid": "^8.3.2",
     "vue": "^3.4.34",
-    "vue-router": "4",
+    "vue-router": "^4.4.5",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

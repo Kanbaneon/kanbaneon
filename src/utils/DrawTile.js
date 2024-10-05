@@ -8,7 +8,7 @@ export default function getTile({ largestChildren, height }) {
   const tile = new Konva.Rect({
     y: 10,
     fill: "#FFFFFF",
-    height: largestChildren > 3 ? height + (largestChildren - 3) * 180 : height,
+    height: largestChildren > 3 ? (largestChildren * 12) + (largestChildren * 180) + 50 : (largestChildren * 12) + largestChildren * 250,
     width: 295,
     cornerRadius: 8,
     shadowBlur: 1,

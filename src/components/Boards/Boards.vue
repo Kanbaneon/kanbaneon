@@ -50,11 +50,11 @@
 </template>
 
 <script>
-import PlusIcon from "../assets/PlusIcon.vue";
-import KanbanImg from "../assets/KanbanImg.vue";
-import GetStartedImg from "../assets/GetStartedImg.vue";
+import PlusIcon from "../../assets/PlusIcon.vue";
+import KanbanImg from "../../assets/KanbanImg.vue";
+import GetStartedImg from "../../assets/GetStartedImg.vue";
 import * as uuid from "uuid";
-import { addBoard, getBoards } from "../helpers/ApiHelper";
+import { addBoard, getBoards } from "../../helpers/ApiHelper";
 
 const getTemplateList = () => [
   {
@@ -125,7 +125,7 @@ export default {
       this.mode = e.target.value;
     },
     handleDirect(id) {
-      this.$router.push(`/board/${id}`);
+      this.$router.push(`/boards/${id}`);
     },
     handleNameChange(e) {
       this.name = e.target.value;
@@ -192,7 +192,8 @@ export default {
 
 .container {
   padding: 16px;
-  min-height: 90vh;
+  min-height: 70vh;
+  margin-top: 140px;
   background: #42b883;
 }
 

@@ -15,7 +15,7 @@ export function initList() {
 
   const largestChildren =
     !!kanbanList()?.length &&
-    Math.max(...kanbanList().map((v) => v.children?.length));
+    Math.max(...kanbanList().map((v) => v.children?.length)) || 2;
   const standardRect = this.drawFns().getTile({ largestChildren, height });
 
   const standardTitleRect = new Konva.Rect({

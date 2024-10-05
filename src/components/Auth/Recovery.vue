@@ -72,10 +72,10 @@
 import { onBeforeMount, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { EyeTwoTone, EyeInvisibleOutlined, LockOutlined } from '@ant-design/icons-vue';
-import { editPassword, validateToken } from '../helpers/ApiHelper';
-import LoadingImg from "../assets/Loading.vue";
-import ThrowImg from "../assets/Throw.vue";
-import SuccessImg from "../assets/Success.vue";
+import { editPassword, validateToken } from '../../helpers/ApiHelper';
+import LoadingImg from "../../assets/Loading.vue";
+import ThrowImg from "../../assets/Throw.vue";
+import SuccessImg from "../../assets/Success.vue";
 
 const route = useRoute();
 const router = useRouter();

@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import Header from "./components/Header.vue";
-import MobileMessage from "./components/MobileMessage.vue";
+import Header from "./components/Shared/Header.vue";
+import MobileMessage from "./components/Views/MobileMessage.vue";
 
 export default {
   data() {
@@ -47,6 +47,7 @@ export default {
 <style>
 body {
   background-color: #42b883 !important;
+  height: 75% !important;
 }
 
 .ant-card-body {

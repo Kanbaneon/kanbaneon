@@ -143,9 +143,9 @@ import {
     EditOutlined
 } from "@ant-design/icons-vue";
 import { onMounted, reactive, h, ref } from "vue";
-import UserIcon from "../assets/UserIcon.vue";
+import UserIcon from "../../assets/UserIcon.vue";
 import { useStore } from "vuex";
-import { editProfile, getProfile, uploadPhoto } from "../helpers/ApiHelper";
+import { editProfile, getProfile, uploadPhoto } from "../../helpers/ApiHelper";
 import { v4 } from "uuid";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";

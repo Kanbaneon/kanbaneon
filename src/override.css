@@ -2,6 +2,10 @@
     position: fixed;
 }
 
+.ant-popover .ant-popover-title {
+    margin-bottom: 0px;
+}
+
 .avatar {
     background: #42b883;
     border-radius: 50%;

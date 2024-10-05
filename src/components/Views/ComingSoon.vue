@@ -1,16 +1,22 @@
 <template>
   <div class="container">
-    <MobileAlert />
-    <h1>Kanbaneon cannot be used on the screen of this device.</h1>
-    <h5>Please open it on PC browser.</h5>
+    <GetStartedImg />
+    <h1>Kanbaneon is in development.</h1>
+    <h5>
+      Please trace the progress at
+      <a href="https://github.com/Kanbaneon/kanbaneon"
+        >https://github.com/Kanbaneon/kanbaneon</a
+      >
+    </h5>
   </div>
 </template>
 
 <script>
-import MobileAlert from "../assets/MobileAlert.vue";
+import GetStartedImg from "../../assets/GetStartedImg.vue";
+
 export default {
   components: {
-    MobileAlert,
+    GetStartedImg,
   },
 };
 </script>
@@ -19,20 +25,24 @@ export default {
 .container {
   height: 100vh;
   background: #42b883;
+  padding: 20px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
 }
+
 h1 {
   color: white;
   font-size: 46px;
 }
+
 h5 {
   color: white;
   font-size: 16px;
 }
+
 a {
   text-decoration: underline;
   color: #35495e;
