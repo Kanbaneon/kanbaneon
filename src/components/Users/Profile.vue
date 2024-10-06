@@ -204,7 +204,7 @@ const handleFileChange = async () => {
         const response = await uploadPhoto(form);
         if (response.success) {
             $store.commit("setProfile");
-            state.formState.details.profilePicture = response.data;
+            state.formState.details.profilePicture = response.details.profilePicture;
         }
     } catch (ex) {
         console.error(ex);

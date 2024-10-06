@@ -81,8 +81,10 @@ const activeComponent = computed(() => {
 
 <style scoped>
 .menu {
-    height: calc(60vh + 140px);
+    height: 100%;
     border-radius: 4px;
+    position: fixed;
+    max-width: 250px;
 }
 
 .col {
@@ -95,6 +97,11 @@ const activeComponent = computed(() => {
     justify-content: start;
     align-items: start;
     flex-direction: column;
-    overflow-y: auto;
+    margin-left: 10px;
+    border-radius: 4px;
+}
+
+.card h2 {
+    position: absolute;
 }
 </style>

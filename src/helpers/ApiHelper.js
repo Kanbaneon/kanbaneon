@@ -47,6 +47,22 @@ export async function reauth(token) {
   }
 }
 
+export async function deleteUser({ username, password }) {
+  try {
+    const response = await post(
+      `/users/${username}/delete`,
+      { password },
+      token()
+    );
+    if (response.success) {
+      message.success("Account is successfully deleted.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function sendRecoveryEmail(payload) {
   try {
     const response = await post("/recovery", payload);
