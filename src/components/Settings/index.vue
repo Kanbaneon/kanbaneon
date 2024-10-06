@@ -9,9 +9,7 @@
                 <a-card class="card">
                     <div class="card">
                         <h2>{{ activeComponent?.label }} Settings</h2>
-                        <keep-alive>
-                            <component :is="activeComponent.component" />
-                        </keep-alive>
+                        <component :is="activeComponent.component" />
                     </div>
                 </a-card>
             </a-col>

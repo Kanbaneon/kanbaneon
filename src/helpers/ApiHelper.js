@@ -144,6 +144,17 @@ export async function editProfile(profile) {
   }
 }
 
+export async function getNotification() {
+  try {
+    const response = await get(`/notification`, token());
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function getBoard(id) {
   try {
     const response = await get(`/boards/${id}`);
