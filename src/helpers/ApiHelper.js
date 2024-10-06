@@ -155,6 +155,18 @@ export async function getNotification() {
   }
 }
 
+export async function editNotification(notification) {
+  try {
+    const response = await put(`/notification`, notification, token());
+    if (response.success) {
+      message.success("Notification settings are successfully saved.");
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function getBoard(id) {
   try {
     const response = await get(`/boards/${id}`);

@@ -15,7 +15,7 @@
           </a-form-item>
           <h1>Your watchlists</h1>
           <a-form-item class="custom-input" :name="['watchlists']">
-            <div v-if="!notificationFormState.watchlists.length">
+            <div v-if="!notificationFormState?.watchlists?.length">
               <WatchlistImg />
               <p>You do not have any watchlist. You may watch the activities on the boards that you have access.</p>
             </div>
@@ -34,7 +34,7 @@
 <script setup>
 import { computed, onBeforeMount, reactive, ref } from 'vue';
 import WatchlistImg from "../../assets/Watchlist.vue";
-import { getNotification } from '../../helpers/ApiHelper';
+import { editNotification, getNotification } from '../../helpers/ApiHelper';
 
 
 const state = reactive({
@@ -69,6 +69,7 @@ const submitNotificationSettings = async (e) => {
   state.isLoading = true;
   try {
     await notificationFormRef.value.validateFields();
+    await editNotification(notificationFormState);
   } catch (ex) {
     console.error(ex);
   }
