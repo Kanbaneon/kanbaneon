@@ -8,7 +8,7 @@
         </h2>
         <div class="input-wrapper">
           <a-form-item :name="['username']"
-            :rules="[{ required: true, message: 'Username is required.' }, { validator: validateUsername, message: 'Username must be 5-10 characters long and contain only lowercase letters, numbers, or underscores (no special characters or dashes).' }]">
+            :rules="[{ required: true, message: 'Username is required.' }, { validator: validateUsername, message: 'Username must be 5-20 characters long and contain only lowercase letters, numbers, or underscores (no special characters or dashes).' }]">
             <a-input v-model:value="formState.username" placeholder="Enter your username" autocomplete="new-username">
               <template #prefix>
                 <UserOutlined class="site-form-item-icon" />
@@ -80,7 +80,7 @@ export default {
       if (!value) {
         return Promise.resolve();
       }
-      const usernameStandard = /^[a-z0-9_]{5,10}$/
+      const usernameStandard = /^[a-z0-9_]{5,20}$/
       if (usernameStandard.test(value)) {
         return Promise.resolve();
       }

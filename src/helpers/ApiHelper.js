@@ -14,7 +14,18 @@ export async function login(username, password) {
   }
 }
 
-export async function uploadPhoto(formData) {
+export async function deleteProfilePicture() {
+  try {
+    const response = await del("/profile/picture", token());
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
+export async function uploadProfilePicture(formData) {
   try {
     const response = await post("/profile/picture", formData, token());
     if (response.success) {

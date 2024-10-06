@@ -100,8 +100,8 @@
                         </a-form-item>
 
                         <input type="submit" hidden />
-                        <a-button :disabled="state.isLoading || state.isLoadingProfile" type="primary" size="large" block
-                            @click="isLite ? saveProfile($event) : saveProfileApi($event)">
+                        <a-button :disabled="state.isLoading || state.isLoadingProfile" type="primary" size="large"
+                            block @click="isLite ? saveProfile($event) : saveProfileApi($event)">
                             <a-spin v-if="state.isLoading" />
                             {{ state.isLoading || state.isLoadingProfile ? "Loading..." : "Save Profile" }}</a-button>
                     </a-form>
@@ -115,7 +115,7 @@
                             <a-flex vertical>
                                 <input type="file" hidden ref="fileRef" accept="image/*" @change="handleFileChange" />
                                 <a-button @click="handleUpload">Upload photo</a-button>
-                                <a-button>Remove photo</a-button>
+                                <a-button @click="handleRemovePhoto">Remove photo</a-button>
                             </a-flex>
                         </template>
                         <div role="button">
@@ -145,7 +145,7 @@ import {
 import { onMounted, reactive, h, ref } from "vue";
 import UserIcon from "../../assets/UserIcon.vue";
 import { useStore } from "vuex";
-import { editProfile, getProfile, uploadPhoto } from "../../helpers/ApiHelper";
+import { editProfile, getProfile, uploadProfilePicture, deleteProfilePicture } from "../../helpers/ApiHelper";
 import { v4 } from "uuid";
 
 const isLite = import.meta.env.VITE_LITE_VERSION === "ON";
@@ -192,6 +192,22 @@ const handleUpload = () => {
     fileRef.value.click();
 }
 
+const handleRemovePhoto = async () => {
+    state.isLoadingProfile = true;
+    try {
+        popoverRef.value = false;
+        const response = await deleteProfilePicture();
+        if (response.success) {
+            $store.commit("setProfile");
+            state.formState.details.profilePicture = response.details.profilePicture;
+        }
+    } catch (ex) {
+        console.error(ex);
+    } finally {
+        state.isLoadingProfile = false;
+    }
+}
+
 const handleFileChange = async () => {
     state.isLoadingProfile = true;
     try {
@@ -201,7 +217,7 @@ const handleFileChange = async () => {
         const fileName = `${$store?.state?.profile?.username}-profile-picture-${v4()}`;
         form.append("image", file);
         form.set("name", fileName);
-        const response = await uploadPhoto(form);
+        const response = await uploadProfilePicture(form);
         if (response.success) {
             $store.commit("setProfile");
             state.formState.details.profilePicture = response.details.profilePicture;
