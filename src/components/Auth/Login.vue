@@ -156,7 +156,7 @@ a {
 }
 
 .forgot-link {
-  margin-left: 100px;
+  margin-left: 6vw;
 }
 </style>
 

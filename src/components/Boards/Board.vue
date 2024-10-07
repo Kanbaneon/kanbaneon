@@ -4,8 +4,17 @@
       <div id="kanbaneon-canvas"></div>
     </div>
   </a-spin>
-  <a-modal title="Enter the message of new item" :visible="visible" @ok="handleOk" @cancel="handleCancel">
-    <a-textarea rows="8" class="ant-input" placeholder="Type here..." v-model:value="message" />
+  <a-modal title="Enter the details of new item" :visible="visible" @ok="handleOk" @cancel="handleCancel">
+    <a-form layout="vertical" :model="cardDialog.newCard">
+      <a-form-item label="Title"> <a-input v-model:value="cardDialog.newCard.title"></a-input></a-form-item>
+      <a-form-item label="Description">
+        <a-textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..."
+          v-model:value="cardDialog.newCard.text" />
+      </a-form-item>
+      <a-form-item>
+        <a-checkbox v-model:checked="cardDialog.newCard.isWatching">Watch this card</a-checkbox>
+      </a-form-item>
+    </a-form>
     <template v-slot:footer>
       <a-button key="back" @click="handleCancel"> Cancel </a-button>
       <a-button key="submit" type="primary" @click="handleOk">
@@ -15,7 +24,8 @@
   </a-modal>
   <a-modal :title="listDialog.title" :visible="listDialog.visible" @ok="handleOkListDialog"
     @cancel="handleCancelListDialog">
-    <a-input class="ant-input" placeholder="Name" v-model:value="listDialog.editingList.name" @change="handleNameChange" />
+    <a-input class="ant-input" placeholder="Name" v-model:value="listDialog.editingList.name"
+      @change="handleNameChange" />
     <label class="error-label">{{ listDialog.error.name }}</label>
     <template v-slot:footer>
       <a-button v-if="!listDialog.creating" class="btn-danger" type="danger" @click="handleDeleteList">Delete</a-button>
@@ -27,8 +37,16 @@
   </a-modal>
   <a-modal :title="cardDialog.title" :visible="cardDialog.visible" @ok="handleOkCardDialog"
     @cancel="handleCancelCardDialog">
-    <a-textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..."
-      v-model:value="cardDialog.editingCard.text" />
+    <a-form layout="vertical" :model="cardDialog.editingCard">
+      <a-form-item label="Title"> <a-input v-model:value="cardDialog.editingCard.title"></a-input></a-form-item>
+      <a-form-item label="Description">
+        <a-textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..."
+          v-model:value="cardDialog.editingCard.text" />
+      </a-form-item>
+      <a-form-item>
+        <a-checkbox v-model:checked="cardDialog.editingCard.isWatching">Watch this card</a-checkbox>
+      </a-form-item>
+    </a-form>
     <template v-slot:footer>
       <a-button class="btn-danger" type="danger" @click="handleDeleteCard">Delete</a-button>
       <a-button key="back" @click="handleCancelCardDialog"> Cancel </a-button>
@@ -70,11 +88,17 @@ export default {
       isLite: import.meta.env.VITE_LITE_VERSION === "ON",
       isLoading: false,
       visible: false,
-      message: "",
       addingList: null,
       cardDialog: {
-        editingCard: {
+        newCard: {
+          title: "",
           text: "",
+          isWatching: false
+        },
+        editingCard: {
+          title: "",
+          text: "",
+          isWatching: false
         },
       },
       listDialog: {
@@ -108,7 +132,11 @@ export default {
     deleteListOnCanvas,
     handleCancel() {
       this.visible = false;
-      this.message = "";
+      this.cardDialog.newCard = {
+        title: "",
+        text: "",
+        isWatching: false
+      }
     },
     handleCancelCardDialog() {
       this.cardDialog = {
@@ -116,6 +144,8 @@ export default {
         visible: false,
         editingCard: {
           text: "",
+          title: "",
+          isWatching: false
         },
       };
     },
@@ -135,7 +165,7 @@ export default {
       try {
         const newCard = {
           id: uuid.v4(),
-          text: this.message,
+          ...this.cardDialog.newCard,
         };
         const listId = this.addingList?.id;
         const addedResult = this.isLite ? this.addCardOnCanvas({ listId, newCard }) : await addCard(this.$store.state.currentBoardID, listId, newCard);
@@ -153,10 +183,10 @@ export default {
     },
     async handleOkCardDialog() {
       try {
+        const { parentList, ...cardDetails } = this.cardDialog.editingCard;
         const editingCard = {
-          id: this.cardDialog.editingCard.id,
           listId: this.cardDialog.editingCard.parentList.id,
-          text: this.cardDialog.editingCard.text,
+          ...cardDetails
         };
         const editedResult = this.isLite ? this.editCardOnCanvas(editingCard) : await editCard(this.$store.state.currentBoardID, editingCard);
         if (editedResult?.board) {

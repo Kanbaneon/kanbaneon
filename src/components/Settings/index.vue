@@ -6,12 +6,12 @@
                     :items="items"></a-menu>
             </a-col>
             <a-col :xs="20" class="col">
-                <a-card class="card">
+                <div class="card">
                     <div class="card">
                         <h2>{{ activeComponent?.label }} Settings</h2>
                         <component :is="activeComponent.component" />
                     </div>
-                </a-card>
+                </div>
             </a-col>
         </a-row>
     </section>
@@ -97,6 +97,9 @@ const activeComponent = computed(() => {
     flex-direction: column;
     margin-left: 10px;
     border-radius: 4px;
+
+    background: white;
+    padding: 12px;
 }
 
 .card h2 {
