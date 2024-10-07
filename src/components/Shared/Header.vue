@@ -35,7 +35,7 @@
       <a-row class="header-breadcrumb">
         <h3>
           <a-breadcrumb>
-            <a-breadcrumb-item><a href="/">Home</a></a-breadcrumb-item>
+            <a-breadcrumb-item><router-link to="/">Home</router-link></a-breadcrumb-item>
             <a-breadcrumb-item :key="$route.path">{{ $route.name }}</a-breadcrumb-item>
             <a-breadcrumb-item v-if="currentBoard?.name" :key="currentBoard?.name">
               {{ currentBoard?.name

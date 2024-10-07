@@ -210,8 +210,11 @@ const submitNotificationSettings = async (e) => {
   state.isLoading = true;
   try {
     await notificationFormRef.value.validateFields();
-    notificationFormState.watchlists = notificationFormState.watchlists.filter(item => !item.isDeleted)
-    await editNotification(notificationFormState);
+    const result = await editNotification(notificationFormState);
+    if (result.success) {
+      notificationFormState.newsletter = result.notification.newsletter;
+      notificationFormState.watchlists = result.notification.watchlists;
+    }
   } catch (ex) {
     console.error(ex);
   }
