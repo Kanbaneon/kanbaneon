@@ -149,20 +149,23 @@ function constructLabel(label) {
 
 const notificationFormRef = ref("notificationFormRef");
 const watchListData = computed(() => {
-  return notificationFormState.watchlists.map((item) => {
+  const messages = notificationFormState.watchlists.map((item) => {
     const board = state.details.find(board => board.id === item.boardId) || {};
     const list = Array.isArray(board?.kanbanList) ? board?.kanbanList.find(list => list.id === item.listId) : {};
     const card = Array.isArray(list?.children) ? list?.children.find(card => card.id === item.cardId) : {};
     return {
       item: {
         ...item,
-        boardName: board?.name,
+        boardName: board?.name || "",
         boardId: board?.id,
-        listName: list?.name,
-        cardName: card?.title,
+        listName: list?.name || "",
+        cardName: card?.title || "",
+        isNotFound: !card || !list || !board
       }
     }
-  })
+  });
+  const filteredMessages = messages.filter(message => !message.item.isNotFound);
+  return filteredMessages;
 })
 
 onBeforeMount(async () => {

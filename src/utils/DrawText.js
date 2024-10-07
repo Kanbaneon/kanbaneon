@@ -13,6 +13,7 @@ export default function getText({ x }) {
 
   text.on("click", (e) => {
     this.cardDialog = {
+      ...this.cardDialog,
       visible: true,
       title: "Edit Card",
       editingCard: {
