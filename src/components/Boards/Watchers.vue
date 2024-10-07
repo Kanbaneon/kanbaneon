@@ -1,5 +1,5 @@
 <template>
-    <a-list size="small" borded item-layout="horizontal" :data-source="props.watchers">
+    <a-list size="small" bordered item-layout="horizontal" :data-source="props.watchers">
         <template #renderItem="{ item }">
             <a-list-item>
                 <router-link target="_blank" :to="{ path: 'profile', params: { username: item.username } }">{{

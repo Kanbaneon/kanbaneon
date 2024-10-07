@@ -150,6 +150,17 @@ export async function getProfiles(ids) {
   }
 }
 
+export async function searchProfiles(searchText) {
+  try {
+    const response = await get(`/profiles/${searchText}`, token());
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    //message.error(ex.message);
+  }
+}
+
 export async function editProfile(profile) {
   try {
     const response = await put(`/profile`, profile);
@@ -392,7 +403,7 @@ const get = async (endpoint) => {
 
   const json = await response.json();
   if (response.status !== 200) {
-    return message.error(json.message);
+    throw new Error(json.message)
   }
 
   return json;
