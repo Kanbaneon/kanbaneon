@@ -35,7 +35,12 @@
     overflow: hidden;
 }
 
-.avatar,.mini-avatar img {
+.avatar img {
+    height: 100%;
+    width: auto;
+}
+
+.mini-avatar img {
     height: 100%;
     width: auto;
 }

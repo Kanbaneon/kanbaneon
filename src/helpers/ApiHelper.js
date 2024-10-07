@@ -100,7 +100,14 @@ export async function editUsername(payload) {
 
 export async function editPassword(payload) {
   try {
-    const response = await post(`/recovery/${token}/password`, payload);
+    const passwordResetUrl = payload.inApp
+      ? `/recovery/in-app/password`
+      : `/recovery/password`;
+    const response = await post(
+      passwordResetUrl,
+      payload,
+      payload.inApp ? token() : ""
+    );
     if (response.success) {
       message.success("Password is successfully updated.");
       return response;

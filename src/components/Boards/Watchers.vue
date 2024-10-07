@@ -5,8 +5,8 @@
                 <router-link target="_blank" :to="{ path: 'profile', params: { username: item.username } }">{{
                     item.username }}</router-link>
 
-                <a-avatar v-if="item?.details?.profilePicture?.link" :src="item?.details?.profilePicture?.link" />
-                <div class="mini-avatar">
+                <a-avatar class="mini-avatar" v-if="item?.details?.profilePicture?.link" :src="item?.details?.profilePicture?.link" />
+                <div v-else class="mini-avatar">
                     <UserIcon />
                 </div>
             </a-list-item>
@@ -29,5 +29,9 @@ const props = defineProps(["watchers"]);
 <style scoped>
 .ant-list-item {
     padding: 4px;
+}
+
+.ant-list-header {
+    padding-block: 4px;
 }
 </style>
