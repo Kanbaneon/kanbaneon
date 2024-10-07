@@ -4,9 +4,10 @@
       <div id="kanbaneon-canvas"></div>
     </div>
   </a-spin>
-  <a-modal title="Enter the details of new item" :visible="visible" @ok="handleOk" @cancel="handleCancel">
+  <a-modal title="Enter the details of new card" :visible="visible" @ok="handleOk" @cancel="handleCancel">
     <a-form layout="vertical" :model="cardDialog.newCard">
-      <a-form-item label="Title"> <a-input v-model:value="cardDialog.newCard.title"></a-input></a-form-item>
+      <a-form-item label="Title" :rules="[{ required: true, message: 'Title is required' }]" name="title"> <a-input
+          v-model:value="cardDialog.newCard.title"></a-input></a-form-item>
       <a-form-item label="Description">
         <a-textarea rows="8" class="ant-input edit-card-textarea" placeholder="Type here..."
           v-model:value="cardDialog.newCard.text" />
@@ -46,6 +47,15 @@
       <a-form-item>
         <a-checkbox v-model:checked="cardDialog.editingCard.isWatching">Watch this card</a-checkbox>
       </a-form-item>
+      <a-popover v-model:open="watcherOpen" trigger="click">
+        <template #content>
+          <Watchers :watchers="watcherDetails" />
+        </template>
+        <div class="watchers" @click="handleWatcherData(cardDialog.editingCard.watchers)">
+          {{ cardDialog.editingCard.watchers?.length === 1 ? "1 person is watching this card." :
+            `${cardDialog.editingCard.watchers?.length} are watching this card.` }}
+        </div>
+      </a-popover>
     </a-form>
     <template v-slot:footer>
       <a-button class="btn-danger" type="danger" @click="handleDeleteCard">Delete</a-button>
@@ -78,9 +88,12 @@ import {
   addList, addCard,
   editList, editCard,
   deleteList, deleteCard,
-  getBoard
+  getBoard,
+  getProfiles
 } from '../../helpers/ApiHelper';
 import * as uuid from "uuid";
+import { message } from "ant-design-vue";
+import Watchers from "./Watchers.vue";
 
 export default {
   data() {
@@ -89,6 +102,8 @@ export default {
       isLoading: false,
       visible: false,
       addingList: null,
+      watcherDetails: [],
+      watcherOpen: false,
       cardDialog: {
         newCard: {
           title: "",
@@ -98,7 +113,8 @@ export default {
         editingCard: {
           title: "",
           text: "",
-          isWatching: false
+          isWatching: false,
+          watchers: []
         },
       },
       listDialog: {
@@ -110,6 +126,9 @@ export default {
         },
       },
     };
+  },
+  components: {
+    Watchers
   },
   methods: {
     drawFns() {
@@ -130,6 +149,17 @@ export default {
     deleteCardOnCanvas,
     editListOnCanvas,
     deleteListOnCanvas,
+    async handleWatcherData(ids) {
+      if (this.watcherOpen) {
+        this.watcherOpen = false;
+        return;
+      }
+      const result = await getProfiles(ids);
+      if (result.success) {
+        this.watcherDetails = result.users;
+        this.watcherOpen = true;
+      }
+    },
     handleCancel() {
       this.visible = false;
       this.cardDialog.newCard = {
@@ -145,7 +175,8 @@ export default {
         editingCard: {
           text: "",
           title: "",
-          isWatching: false
+          isWatching: false,
+          watchers: []
         },
       };
     },
@@ -356,6 +387,13 @@ export default {
 .btn-danger {
   background: #ef180c;
   color: white;
+}
+
+.watchers {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #42b883;
+  width: fit-content;
 }
 </style>
 

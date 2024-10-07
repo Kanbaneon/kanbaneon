@@ -1,4 +1,5 @@
 import Konva from "konva";
+import { store } from "../store";
 
 export default function getText({ x }) {
   const text = new Konva.Text({
@@ -19,6 +20,7 @@ export default function getText({ x }) {
       editingCard: {
         ...e?.currentTarget?.attrs?.cardDetails,
         parentList: e?.currentTarget?.attrs?.parentList,
+        isWatching: e?.currentTarget?.attrs?.cardDetails?.watchers?.includes(store.state.user.id)
       },
     };
   });

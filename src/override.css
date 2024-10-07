@@ -20,7 +20,22 @@
     overflow: hidden;
 }
 
-.avatar img {
+.mini-avatar {
+    background: #42b883;
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    border: solid 1px #42b883;
+    margin-left: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.avatar,.mini-avatar img {
     height: 100%;
     width: auto;
 }

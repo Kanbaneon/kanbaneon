@@ -132,6 +132,17 @@ export async function getProfile() {
   }
 }
 
+export async function getProfiles(ids) {
+  try {
+    const response = await get(`/profiles?ids=${ids}`, token());
+    if (response.success) {
+      return response;
+    }
+  } catch (ex) {
+    message.error(ex.message);
+  }
+}
+
 export async function editProfile(profile) {
   try {
     const response = await put(`/profile`, profile);

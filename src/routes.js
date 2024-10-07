@@ -22,6 +22,7 @@ const logoutGuard = isLite
           if (result?.success) {
             store.state.user = {
               username: result.reauth.username,
+              id: result.reauth.id,
               isLoggedIn: true,
             };
           } else {
@@ -58,6 +59,7 @@ const sessionGuard = isLite
         if (result?.success) {
           store.state.user = {
             username: result.reauth.username,
+            id: result.reauth.id,
             isLoggedIn: true,
           };
           store.commit("setProfile");

@@ -84,7 +84,7 @@ export function initListItem(list, x, e) {
 
     const titleText = standardText.clone();
     titleText.id(`LIST-${list?.id}-TEXT-${card?.id}`);
-    titleText.text(card?.text);
+    titleText.text(card?.title);
 
     titleText.attrs.cardDetails = card;
     titleText.attrs.parentList = list;
