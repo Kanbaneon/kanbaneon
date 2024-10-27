@@ -127,6 +127,14 @@ const nonLiteRoutes = [
     component: () => import("./components/Views/TermsAndConditions.vue"),
   },
   {
+    path: "/privacy-policy",
+    component: () => import("./components/Views/PrivacyPolicy.vue"),
+  },
+  {
+    path: "/data-deletion-instructions",
+    component: () => import("./components/Views/DataDeletionInstructions.vue"),
+  },
+  {
     path: "/forgot",
     beforeEnter: forgotGuard,
     component: () => import("./components/Auth/Forgot.vue"),
